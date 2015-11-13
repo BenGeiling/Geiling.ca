@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!-- HEADER -->
+<head>
+	<!-- Set-up important tags + load css -->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Ben Geiling</title>
+	<meta name="robots" content="index" />
+	<meta name="author" content="Ben Geiling" />
+	<link rel="stylesheet" type="text/css" href="main.css" media="screen" />
+
+	<!-- Include JQuery -->
+	<script type="text/javascript" src="scripts/jquery-2.1.4.min.js"></script>
+
+	<!-- Include content resize script -->
+	<script type="text/javascript" src="scripts/resize.js"></script>
+
+	<!-- Scripts -->
+	<script>
+		//Google analytics stuff
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-34281074-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+		//Called by resize.js when the page needs to be loaded
+		function pageLoad() {
+
+			//Create a min. relative stage size (looks better smaller on bigger screens)
+			var MAX_SIZE = 500;
+            var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
+
+            if (MAX_SIZE >= SCALE) {
+                stageW = SCALE;
+            }
+
+			//Setup key variables for displaying different elements
+			var iconSpace = SCALE/100; //Space bettwen icons
+			var iconNumber = 4; //Icons per line
+            stageW -= (iconSpace*iconNumber);
+            var iconW = (stageW/2);
+
+
+			//Set icon size based on icon spacing and number per line
+			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
+
+			var nameH = (iconSize*2)+iconSpace; //Set name height relative to SVG LxW
+			var nameW = nameH*2;
+            var backerH = nameH;
+            var backerW = nameW+iconW+(iconSpace*2);
+
+			//Vertical center everything
+			var floatH = (BODY_HEIGHT/2)-(nameH/2)-(iconSpace)-(iconSpace/2)+1;
+
+			//Set size of constant DIVs
+			$("#floater").height(floatH); //Buffer at top of screen
+            $("#floater").css("border-bottom-width", iconSpace+"px"); //Center name vertically with icons
+            $("#bottom-floater").height(floatH); //Buffer at bottom of screen
+            $("#bottom-floater").css("border-top-width", iconSpace+"px"); //Center name vertically with icons
+            $("#container").width(stageW); //Set container width relative to stage width
+			$("#container").height(backerH); //Height of backer (relative to its height)
+            $("#name").height(nameH); //Height of name (relative to its width)
+            $("#name").width(nameW); //Set name width relative to stage width
+			$("#name").css("margin-right", iconSpace); //Center name vertically with icons
+			$("#wrapper").width(iconW); //Set wrapper width relative to stage width
+			$("#backer").height(backerH); //Height of backer (relative to its height)
+			$("#backer").width(backerW); //Width of backer (relative to its height)
+            $("#backer").css("border-width", iconSpace+"px"); //Center name vertically with icons
+           // $("#backer").css("border-right-width", iconSpace+"px"); //Center name vertically with icons
+            //	$("#backer").css("border-bottom-width", iconSpace/2+"px"); //Center name vertically with icons
+			$("#backer").css("padding", iconSpace); //Padding stuff
+
+			//Handle all the icons
+			var iconID = new Array();
+			iconID = ["google", "facebook", "twitter", "github", "keybase", "links", "instagram", "publications"];
+			//Loop through each icon ID
+			for (var x = 0; x < iconID.length; x++) {
+
+				//Create icon DIVs if needed
+				if (!document.getElementById(iconID[x])) {
+					var newIcon = document.createElement('div');
+					newIcon.id = iconID[x];
+					document.getElementById('wrapper').appendChild(newIcon);
+                }
+
+				//Sort out common icon attributes
+				$("#"+iconID[x]).height(iconSize); $("#"+iconID[x]).width(iconSize);
+				$("#"+iconID[x]).css("float", "left");
+				//$("#"+iconID[x]).css("background", 'url("images/'+iconID[x]+'B.svg") no-repeat');
+				//$("#"+iconID[x]).css("background-size", "contain");
+				$("#"+iconID[x]).attr('title', iconID[x]);
+
+                if (x >= (iconID.length/2)) {$("#"+iconID[x]).css("margin-top", iconSpace);}
+
+				//Add Onclick function
+				var onclickLocation;
+				if (iconID[x] === "google") {
+					onclickLocation = "https://www.plus.google.com/106269819982694676557/posts/p/pub";
+				} else if (iconID[x] === "facebook") {
+					onclickLocation = "https://www.facebook.com/ben.geiling";
+				} else if (iconID[x] === "twitter") {
+					onclickLocation = "https://www.twitter.com/BenGeiling";
+				} else if (iconID[x] === "github") {
+					onclickLocation = "https://www.github.com/BenGeiling";
+				} else if (iconID[x] === "keybase") {
+					onclickLocation = "https://www.keybase.io/bengeiling/";
+				} else if (iconID[x] === "instagram") {
+					onclickLocation = "https://www.instagram.com/bengeiling/";
+				} else if (iconID[x] === "publications") {
+					onclickLocation = "Ben Geiling CV.pdf";
+				} else if (iconID[x] === "links") {
+					onclickLocation = "http://www.open-gmo.org/";
+				}
+
+
+				$("#"+iconID[x]).attr('onclick', "window.location='"+onclickLocation+"';");
+
+				//Check if icon is on the end of a line or not
+				if (x === (iconNumber-1) || x === ((iconNumber*2)-1)) {
+					$("#"+iconID[x]).css("margin-right", 0); //End icons don't get a margin
+				} else {$("#"+iconID[x]).css("margin-right", iconSpace);}
+			}
+		}
+	</script>
+</head>
+
+<!-- BODY -->
+<body>
+	<div id="background">
+		<div id="floater"></div>
+
+        <div id="backer">
+            <div id="container">
+                <div id="name" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
+
+                <div id="wrapper">
+                    <div id="google-preload"></div>
+                    <div id="facebook-preload"></div>
+                    <div id="twitter-preload"></div>
+                    <div id="github-preload"></div>
+                    <div id="keybase-preload"></div>
+                    <div id="links-preload"></div>
+                    <div id="instagram-preload"></div>
+                    <div id="publications-preload"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="bottom-floater"></div>
+    </div>
+</body>

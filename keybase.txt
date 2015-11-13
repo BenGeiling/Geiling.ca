@@ -1,0 +1,68 @@
+==================================================================
+https://keybase.io/bengeiling
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://geiling.ca
+  * I am bengeiling (https://keybase.io/bengeiling) on keybase.
+  * I have a public key with fingerprint DD9F 425D F4A4 A8CC D584  7F77 7846 2600 7B8B 9064
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "dd9f425df4a4a8ccd5847f77784626007b8b9064",
+            "host": "keybase.io",
+            "key_id": "784626007b8b9064",
+            "kid": "01014476335b4ad1026580faed098ec595d6f306c056fedef685c06bbfc8a03a3c150a",
+            "uid": "03d347305be8ec23f93fe269ce092f19",
+            "username": "bengeiling"
+        },
+        "service": {
+            "hostname": "geiling.ca",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1427228606,
+    "expire_in": 157680000,
+    "prev": "210949df7f29d7b66db729fb88db05cd4c6e91eb637247cfdad86084fbb6a5dd",
+    "seqno": 8,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.8
+Comment: https://keybase.io/crypto
+
+yMIZAnicbZJdSFRBGIZXS203DC2USNIaqAgWm/M355xFqAhDMcIgvQhrPXNmRk9r
+e7bddW2VxYuQTCxMKrCLoqKUfkCiiEotIxIyy4xSwqKISAJT+lWCaI7ZXXMzzDvv
+93zzDt+D9AUuT9LhxOX00oLMZ0mD/ZtqXWWZA30NANskDnwNIEDnNmYFq2g4FLaC
+UeADhOhMFhXCZEM2NNMkiiarTFVVTUYiglDFGtYhkoEXVNsRp4JjsBGh+ZbNNX7w
+W4Sr//EH5i6gAAVZVpEkKVg2iABFpGiQGZRAXaOmoisEMQkiEyqIUUIZ0hQTIoyZ
+qRlQMiRTUKDBcbV/cRKRZFWCCqa8WpSYLjEqIt2kUBeZoDvGCA0HjX2UuzHlWa0a
+nhgkvIDrMcukzic4WeY984Z802kSCttR27RruF4djYZ8Tlk0HnJ8dRT75wl+bAWJ
+A/WCGA1HLDsIfAJ3mlHLQQqyqIqihiDyAnogZIWp33Icioo0yJfThsY4UhSgLuuE
+qUzUiYoRIlgVdYY1jWComEQ2EdUFipGkirJqMmIQTtVkhjEyFEKAk2l/0AY+jT/T
+qOLIiFUVNKK1YQoS9+9VLHQleVypKcnOILg87ox/4zFanvZbH988cOdFnTJ829vc
+tvDrdSk+eHpF06+bn08cvFgEJwuHG7dluGeXd+UKe9NnrjZfWt3//m5s2YdFo2sW
+v+3M63z8cqww9nrm3MkJ9dXGDv9kx1TaxiOp1tBobldx8sjDkh77x7tbpe4VE8Ij
+c30JuLlh8Fvyjk+RvMBZdr79+akblUUtBfXCF9f06IYfKz9MLB1X20q63w4aW+Nt
+fTRhV2ZdCASeJHqPT00viXyT2veV3Qm+HwmcqU/7NNl7qHv37Mzv3l3bJ7IbW1r2
+HG1a9eZpWelPd/baosqc3rZ1qY0VXT2ZrUNZnpyecmv/9Bbwsdgz9fha/feUsdaa
+Y7gwdeeVvD/tHyti
+=DYth
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/bengeiling
+
+==================================================================
+
