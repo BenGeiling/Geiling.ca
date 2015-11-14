@@ -46,6 +46,7 @@ body
 
     background: url('images/nameA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #name-preload
 {
@@ -70,6 +71,7 @@ body
 {
     background: url('images/googleA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #google-preload
 {
@@ -83,12 +85,14 @@ body
     cursor: pointer;
     background: url('images/googleB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #facebook
 {
     background: url('images/facebookA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #facebook-preload
 {
@@ -102,12 +106,14 @@ body
     cursor: pointer;
     background: url('images/facebookB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #twitter
 {
     background: url('images/twitterA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #twitter-preload
 {
@@ -121,12 +127,14 @@ body
     cursor: pointer;
     background: url('images/twitterB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #links
 {
     background: url('images/linksA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #links-preload
 {
@@ -140,6 +148,7 @@ body
     cursor: pointer;
     background: url('images/linksB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 
@@ -147,6 +156,7 @@ body
 {
     background: url('images/githubA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #github-preload
 {
@@ -160,12 +170,14 @@ body
     cursor: pointer;
     background: url('images/githubB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #keybase
 {
     background: url('images/keybaseA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #keybase-preload
 {
@@ -179,12 +191,14 @@ body
     cursor: pointer;
     background: url('images/keybaseB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #instagram
 {
     background: url('images/instagramA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #instagram-preload
 {
@@ -198,6 +212,7 @@ body
     cursor: pointer;
     background: url('images/instagramB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #publications
@@ -205,6 +220,7 @@ body
     cursor: pointer;
     background: url('images/publicationsA.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 #publications-preload
 {
@@ -218,6 +234,7 @@ body
     cursor: pointer;
     background: url('images/publicationsB.svg') no-repeat;
     background-size: contain;
+    opacity: 0.8;
 }
 
 #backer {
