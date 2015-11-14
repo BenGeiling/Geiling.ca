@@ -58,25 +58,22 @@
 			var floatH = (BODY_HEIGHT/2)-(nameH/2)-(iconSpace)-(iconSpace/2)+1;
 
 			//Set size of constant DIVs
-			$("#floater").height(floatH/2); //Buffer at top of screen
-            $("#floater").css("border-bottom-width", (floatH/2)+"px"); //Center name vertically with icons
-            //$("#floater").css("border-bottom-width", iconSpace+"px"); //Center name vertically with icons
-            $("#bottom-floater").height(floatH/2); //Buffer at bottom of screen
-            $("#bottom-floater").css("border-top-width", (floatH/2)+"px"); //Center name vertically with icons
-            //$("#bottom-floater").css("border-top-width", iconSpace+"px"); //Center name vertically with icons
+			$("#floater").height(floatH-(iconSpace*6)); //Buffer at top of screen
+            $("#floater").css("border-bottom-width", (iconSpace)+"px"); //Center name vertically with icons
+            $("#floater").css("margin-bottom", (iconSpace*5)+"px"); //Center name vertically with icons
+            $("#bottom-floater").height(floatH-(iconSpace*6)); //Buffer at bottom of screen
+            $("#bottom-floater").css("border-top-width", (iconSpace)+"px"); //Center name vertically with icons
+            $("#bottom-floater").css("margin-top", (iconSpace*5)+"px"); //Center name vertically with icons
             $("#container").width(stageW); //Set container width relative to stage width
 			$("#container").height(backerH); //Height of backer (relative to its height)
             $("#name").height(nameH); //Height of name (relative to its width)
             $("#name").width(nameW); //Set name width relative to stage width
 			$("#name").css("margin-right", iconSpace); //Center name vertically with icons
-           // $("#name").css("margin-left", -1); //Center name vertically with icons
 			$("#wrapper").width(iconW); //Set wrapper width relative to stage width
 			$("#backer").height(backerH); //Height of backer (relative to its height)
 			$("#backer").width(backerW); //Width of backer (relative to its height)
             $("#backer").css("border-width", iconSpace+"px"); //Center name vertically with icons
             $("#backer").css("border-radius", (iconSpace*2.25)+"px"); //Center name vertically with icons
-           // $("#backer").css("border-right-width", iconSpace+"px"); //Center name vertically with icons
-            //	$("#backer").css("border-bottom-width", iconSpace/2+"px"); //Center name vertically with icons
 			$("#backer").css("padding", iconSpace); //Padding stuff
 
 			//Handle all the icons
