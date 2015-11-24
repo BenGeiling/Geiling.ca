@@ -10,8 +10,8 @@ $(window).resize(function() {getScale();});
 //Get the scale factor and then call pageLoad
 function getScale() {
 	//Get height and width of screen
-	BODY_HEIGHT = $("#background").height();
-	BODY_WIDTH = $("#background").width();
+	BODY_HEIGHT = $(document).height();
+	BODY_WIDTH = $(document).width();
 
 	//Set SCALE factor to the smaller of the two
 	if (BODY_HEIGHT > BODY_WIDTH) {SCALE = BODY_WIDTH;} else {SCALE = BODY_HEIGHT;}

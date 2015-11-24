@@ -42,7 +42,7 @@
             }
 
             var backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
-            var backerMargin = (SCALE-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
+            var backerMargin = (BODY_HEIGHT-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
 
 			//Setup key variables for displaying different elements
             var iconW = textW = lineW = (backerW*0.8);
@@ -51,16 +51,13 @@
             var textMarginTop = iconMarginBottom = iconSpace*2;
             var textMarginBottom = iconSpace*2;
 
-
 			var iconNumber = 8; //Icons per line
-            stageW -= (iconSpace*iconNumber);
 
 			//Set icon size based on icon spacing and number per line
 			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
 
             var textH = textW/2.54; //Set text height relative to SVG LxW
             var lineH = iconSpace/2;
-
 
             var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
 
