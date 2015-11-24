@@ -22,41 +22,36 @@ body
     height: 100%;
 }
 
-#container
+#text:before
 {
     display: block;
-    height: 100px;
-    padding: 0px;
-    margin-right: auto;
     margin-left: auto;
-}
+    margin-right: auto;
 
-#name
-{
-    display: block;
-    float: left;
-
-    background: url('images/nameA.svg') no-repeat;
+    background: url('images/textB.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
-}
-#name-preload
-{
-    background: url('images/nameB.svg') no-repeat;
+
     height: 0;
     width: 0;
     visibility: hidden;
 }
-#name:hover
-{
-    background: url('images/nameB.svg') no-repeat;
-    cursor: pointer;
-}
-
-#wrapper
+#text
 {
     display: block;
-    float: left;
+    margin-left: auto;
+    margin-right: auto;
+
+    background: url('images/textA.svg') no-repeat;
+    background-size: contain;
+    opacity: 0.8;
+}
+
+#icons
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #google
@@ -231,19 +226,36 @@ body
 
 #backer {
     display: block;
-    background-color: rgba(255, 255, 255, 0.4);
-    opacity: 0.8;
     margin-left: auto;
     margin-right: auto;
-    border-style: solid;
-    border-color: rgba(255, 255, 255, 0.2);
+    background: url('images/circle.svg') no-repeat;
+    background-size: contain;
+
+	/* Theoretically for IE 8 & 9 (more valid) */
+	/* ...but not required as filter works too */
+	/* should come BEFORE filter */
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+	/* This works in IE 8 & 9 too */
+	/* ... but also 5, 6, 7 */
+	filter: alpha(opacity=80);
+
+	/* Older than Firefox 0.9 */
+	-moz-opacity:0.8;
+
+	/* Safari 1.x (pre WebKit!) */
+	-khtml-opacity: 0.8;
+
+	/* Modern!
+	/* Firefox 0.9+, Safari 2?, Chrome any?
+	/* Opera 9+, IE 9+ */
+	opacity: 0.8;
 }
 
-#floater
-{
-    width: 100%;
-}
+.line {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 
-#bottom-floater {
-    width: 100%;
+    background-color: rgba(255,255,255,1);
 }

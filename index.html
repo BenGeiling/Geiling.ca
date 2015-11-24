@@ -34,45 +34,53 @@
 
 			//Create a min. relative stage size (looks better smaller on bigger screens)
 			var MAX_SIZE = 500;
+            var SCALE_FACTOR = 0.6; //Scale everything to be 80% min. size
             var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
 
             if (MAX_SIZE >= SCALE) {
                 stageW = SCALE;
             }
 
+            var backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
+            var backerMargin = (SCALE-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
+
 			//Setup key variables for displaying different elements
-			var iconSpace = SCALE/100; //Space bettwen icons
-			var iconNumber = 4; //Icons per line
+            var iconW = textW = lineW = (backerW*0.8);
+
+            var iconSpace = SCALE/100; //Space bettwen icons
+            var textMarginTop = iconMarginBottom = iconSpace*2;
+            var textMarginBottom = iconSpace*2;
+
+
+			var iconNumber = 8; //Icons per line
             stageW -= (iconSpace*iconNumber);
-            var iconW = (stageW/2);
 
 			//Set icon size based on icon spacing and number per line
 			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
 
-			var nameH = (iconSize*2)+iconSpace; //Set name height relative to SVG LxW
-			var nameW = nameH*2;
-            var backerH = nameW+iconW+(iconSpace*2);
-            var backerW = nameW+iconW+(iconSpace*2);
+            var textH = textW/2.54; //Set text height relative to SVG LxW
+            var lineH = iconSpace/2;
 
-			//Vertical center everything
-			var floatH = (BODY_HEIGHT/2)-(backerH/2);
+
+            var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
 
 			//Set size of constant DIVs
-			$("#floater").height(floatH-(iconSpace*6)); //Buffer at top of screen
-            $("#floater").css("border-bottom-width", (iconSpace)+"px"); //Center name vertically with icons
-            $("#floater").css("margin-bottom", (iconSpace*5)+"px"); //Center name vertically with icons
-            $("#bottom-floater").height(floatH-(iconSpace*6)); //Buffer at bottom of screen
-            $("#bottom-floater").css("border-top-width", (iconSpace)+"px"); //Center name vertically with icons
-            $("#bottom-floater").css("margin-top", (iconSpace*5)+"px"); //Center name vertically with icons
-            $("#container").width(stageW); //Set container width relative to stage width
-			$("#container").height(backerH); //Height of backer (relative to its height)
-            $("#name").height(nameH); //Height of name (relative to its width)
-            $("#name").width(nameW); //Set name width relative to stage width
-			$("#name").css("margin-right", iconSpace); //Center name vertically with icons
-			$("#wrapper").width(iconW); //Set wrapper width relative to stage width
+            $(".line").height(lineH); //Height of name (relative to its width)
+            $(".line").width(lineW); //Set name width relative to stage width
+
+            $("#text").height(textH); //Height of name (relative to its width)
+            $("#text").width(textW); //Set name width relative to stage width
+            $("#text").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
+            $("#text").css("margin-bottom", textMarginBottom+"px"); //Set name width relative to stage width
+
+			$("#icons").height(iconSize); //Set wrapper width relative to stage width
+            $("#icons").width(iconW); //Set wrapper width relative to stage width
+            $("#icons").css("margin-bottom", iconMarginBottom+"px"); //Set name width relative to stage width
+
 			$("#backer").height(backerH); //Height of backer (relative to its height)
 			$("#backer").width(backerW); //Width of backer (relative to its height)
-//			$("#backer").css("padding-top", (backerH/2)); //Padding stuff
+            $("#backer").css("margin-top", backerMargin+"px"); //Set name width relative to stage width
+            $("#backer").css("padding-top", backerPadding+"px"); //Set name width relative to stage width
 
 			//Handle all the icons
 			var iconID = new Array();
@@ -80,21 +88,10 @@
 			//Loop through each icon ID
 			for (var x = 0; x < iconID.length; x++) {
 
-				//Create icon DIVs if needed
-				if (!document.getElementById(iconID[x])) {
-					var newIcon = document.createElement('div');
-					newIcon.id = iconID[x];
-					document.getElementById('wrapper').appendChild(newIcon);
-                }
-
 				//Sort out common icon attributes
 				$("#"+iconID[x]).height(iconSize); $("#"+iconID[x]).width(iconSize);
 				$("#"+iconID[x]).css("float", "left");
-				//$("#"+iconID[x]).css("background", 'url("images/'+iconID[x]+'B.svg") no-repeat');
-				//$("#"+iconID[x]).css("background-size", "contain");
 				$("#"+iconID[x]).attr('title', iconID[x]);
-
-                if (x >= (iconID.length/2)) {$("#"+iconID[x]).css("margin-top", iconSpace);}
 
 				//Add Onclick function
 				var onclickLocation;
@@ -130,26 +127,23 @@
 <!-- BODY -->
 <body>
 	<div id="background">
-		<div id="floater"></div>
 
         <div id="backer">
-            <div id="container">
-                <div id="name-preload"></div>
-                <div id="name" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
 
-                <div id="wrapper">
-                    <div id="google-preload"></div>
-                    <div id="facebook-preload"></div>
-                    <div id="twitter-preload"></div>
-                    <div id="github-preload"></div>
-                    <div id="keybase-preload"></div>
-                    <div id="links-preload"></div>
-                    <div id="instagram-preload"></div>
-                    <div id="publications-preload"></div>
+            <div class="line"></div>
+                <div id="text" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
+
+                <div id="icons">
+                    <div id="google"></div>
+                    <div id="facebook"></div>
+                    <div id="twitter"></div>
+                    <div id="github"></div>
+                    <div id="keybase"></div>
+                    <div id="links"></div>
+                    <div id="instagram"></div>
+                    <div id="publications"></div>
                 </div>
-            </div>
+            <div class="line"></div>
         </div>
-
-        <div id="bottom-floater"></div>
     </div>
 </body>
