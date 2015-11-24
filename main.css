@@ -22,14 +22,6 @@ body
     height: 100%;
 }
 
-#floater
-{
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-bottom-style: solid;
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
 #container
 {
     display: block;
@@ -247,9 +239,11 @@ body
     border-color: rgba(255, 255, 255, 0.2);
 }
 
+#floater
+{
+    width: 100%;
+}
+
 #bottom-floater {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-top-style: solid;
-    border-top-color: rgba(255, 255, 255, 0.1);
 }
