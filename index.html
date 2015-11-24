@@ -51,11 +51,11 @@
 
 			var nameH = (iconSize*2)+iconSpace; //Set name height relative to SVG LxW
 			var nameW = nameH*2;
-            var backerH = nameH;
+            var backerH = nameW+iconW+(iconSpace*2);
             var backerW = nameW+iconW+(iconSpace*2);
 
 			//Vertical center everything
-			var floatH = (BODY_HEIGHT/2)-(nameH/2)-(iconSpace)-(iconSpace/2)+1;
+			var floatH = (BODY_HEIGHT/2)-(backerH/2);
 
 			//Set size of constant DIVs
 			$("#floater").height(floatH-(iconSpace*6)); //Buffer at top of screen
@@ -72,9 +72,7 @@
 			$("#wrapper").width(iconW); //Set wrapper width relative to stage width
 			$("#backer").height(backerH); //Height of backer (relative to its height)
 			$("#backer").width(backerW); //Width of backer (relative to its height)
-            $("#backer").css("border-width", iconSpace+"px"); //Center name vertically with icons
-            $("#backer").css("border-radius", (iconSpace*2.25)+"px"); //Center name vertically with icons
-			$("#backer").css("padding", iconSpace); //Padding stuff
+//			$("#backer").css("padding-top", (backerH/2)); //Padding stuff
 
 			//Handle all the icons
 			var iconID = new Array();
