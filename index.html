@@ -57,7 +57,7 @@
 			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
 
             var textH = textW/2.54; //Set text height relative to SVG LxW
-            var lineH = iconSpace/2;
+            var lineH = Math.ceil(iconSpace/3);
 
             var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
 

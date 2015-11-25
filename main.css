@@ -21,20 +21,6 @@ body
     height: 100%;
 }
 
-#text:before
-{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-
-    background: url('images/textB.svg') no-repeat;
-    background-size: contain;
-    opacity: 0.8;
-
-    height: 0;
-    width: 0;
-    visibility: hidden;
-}
 #text
 {
     display: block;
@@ -59,7 +45,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#google-preload
+#google:before
 {
     background: url('images/googleB.svg') no-repeat;
     height: 0;
@@ -80,7 +66,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#facebook-preload
+#facebook:before
 {
     background: url('images/facebookB.svg') no-repeat;
     width: 0;
@@ -101,7 +87,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#twitter-preload
+#twitter:before
 {
     background: url('images/twitterB.svg') no-repeat;
     width: 0;
@@ -122,7 +108,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#links-preload
+#links:before
 {
     background: url('images/linksB.svg') no-repeat;
     width: 0;
@@ -137,14 +123,13 @@ body
     opacity: 0.8;
 }
 
-
 #github
 {
     background: url('images/githubA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
 }
-#github-preload
+#github:before
 {
     background: url('images/githubB.svg') no-repeat;
     width: 0;
@@ -165,7 +150,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#keybase-preload
+#keybase:before
 {
     background: url('images/keybaseB.svg') no-repeat;
     width: 0;
@@ -186,7 +171,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#instagram-preload
+#instagram:before
 {
     background: url('images/instagramB.svg') no-repeat;
     width: 0;
@@ -208,7 +193,7 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#publications-preload
+#publications:before
 {
     background: url('images/publicationsB.svg') no-repeat;
     width: 0;
@@ -233,22 +218,22 @@ body
 	/* Theoretically for IE 8 & 9 (more valid) */
 	/* ...but not required as filter works too */
 	/* should come BEFORE filter */
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
 
 	/* This works in IE 8 & 9 too */
 	/* ... but also 5, 6, 7 */
-	filter: alpha(opacity=80);
+	filter: alpha(opacity=90);
 
 	/* Older than Firefox 0.9 */
-	-moz-opacity:0.8;
+	-moz-opacity:0.9;
 
 	/* Safari 1.x (pre WebKit!) */
-	-khtml-opacity: 0.8;
+	-khtml-opacity: 0.9;
 
 	/* Modern!
 	/* Firefox 0.9+, Safari 2?, Chrome any?
 	/* Opera 9+, IE 9+ */
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .line {
