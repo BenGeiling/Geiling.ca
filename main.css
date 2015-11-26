@@ -13,6 +13,15 @@ body
     background-size: cover;
 }
 
+#preload
+{
+    background: url('images/publicationsB.svg'), url('images/instagramB.svg'), url('images/googleB.svg'), url('images/keybaseB.svg'), url('images/facebookB.svg'), url('images/twitterB.svg'), url('images/githubB.svg'), url('images/linksB.svg');
+
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
 #background
 {
     clear: both;
@@ -45,13 +54,6 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#google:before
-{
-    background: url('images/googleB.svg') no-repeat;
-    height: 0;
-    width: 0;
-    visibility: hidden;
-}
 #google:hover
 {
     cursor: pointer;
@@ -65,13 +67,6 @@ body
     background: url('images/facebookA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
-}
-#facebook:before
-{
-    background: url('images/facebookB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
 }
 #facebook:hover
 {
@@ -87,13 +82,6 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#twitter:before
-{
-    background: url('images/twitterB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
-}
 #twitter:hover
 {
     cursor: pointer;
@@ -107,13 +95,6 @@ body
     background: url('images/linksA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
-}
-#links:before
-{
-    background: url('images/linksB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
 }
 #links:hover
 {
@@ -129,13 +110,6 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#github:before
-{
-    background: url('images/githubB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
-}
 #github:hover
 {
     cursor: pointer;
@@ -149,13 +123,6 @@ body
     background: url('images/keybaseA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
-}
-#keybase:before
-{
-    background: url('images/keybaseB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
 }
 #keybase:hover
 {
@@ -171,13 +138,6 @@ body
     background-size: contain;
     opacity: 0.8;
 }
-#instagram:before
-{
-    background: url('images/instagramB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
-}
 #instagram:hover
 {
     cursor: pointer;
@@ -192,13 +152,6 @@ body
     background: url('images/publicationsA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
-}
-#publications:before
-{
-    background: url('images/publicationsB.svg') no-repeat;
-    width: 0;
-    height: 0;
-    visibility: hidden;
 }
 #publications:hover
 {
