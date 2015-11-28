@@ -18,17 +18,6 @@
 
 	<!-- Scripts -->
 	<script>
-		//Google analytics stuff
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-34281074-1']);
-		_gaq.push(['_trackPageview']);
-
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
-
 		//Called by resize.js when the page needs to be loaded
 		function pageLoad() {
 
@@ -87,8 +76,7 @@
 
 				//Sort out common icon attributes
 				$("#"+iconID[x]).height(iconSize); $("#"+iconID[x]).width(iconSize);
-				$("#"+iconID[x]).css("float", "left");
-				$("#"+iconID[x]).attr('title', iconID[x]);
+				//$("#"+iconID[x]).css("float", "left");
 
 				//Add Onclick function
 				var onclickLocation;
@@ -133,14 +121,14 @@
                 <div id="text" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
 
                 <div id="icons">
-                    <div id="google"></div>
-                    <div id="facebook"></div>
-                    <div id="twitter"></div>
-                    <div id="github"></div>
-                    <div id="keybase"></div>
-                    <div id="links"></div>
-                    <div id="instagram"></div>
-                    <div id="publications"></div>
+                    <div id="google" title="Google+"></div>
+                    <div id="facebook" title="Facebook"></div>
+                    <div id="twitter" title="Twitter"></div>
+                    <div id="github" title="Github"></div>
+                    <div id="keybase" title="Keybase"></div>
+                    <div id="links" title="Links"></div>
+                    <div id="instagram" title="Instagram"></div>
+                    <div id="publications" title="Publications"></div>
                 </div>
             <div class="line"></div>
         </div>

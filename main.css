@@ -53,6 +53,7 @@ body
     background: url('images/googleA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #google:hover
 {
@@ -67,6 +68,7 @@ body
     background: url('images/facebookA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #facebook:hover
 {
@@ -81,6 +83,7 @@ body
     background: url('images/twitterA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #twitter:hover
 {
@@ -95,6 +98,7 @@ body
     background: url('images/linksA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #links:hover
 {
@@ -109,6 +113,7 @@ body
     background: url('images/githubA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #github:hover
 {
@@ -123,6 +128,7 @@ body
     background: url('images/keybaseA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #keybase:hover
 {
@@ -137,6 +143,7 @@ body
     background: url('images/instagramA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #instagram:hover
 {
@@ -152,6 +159,7 @@ body
     background: url('images/publicationsA.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
+    float: left;
 }
 #publications:hover
 {
