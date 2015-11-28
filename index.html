@@ -35,6 +35,9 @@
 
 			//Setup key variables for displaying different elements
             var iconW = textW = lineW = (backerW*0.8);
+            var dragW = (backerW*0.6);
+            var dragH = dragW/3
+
 
             var iconSpace = SCALE/100; //Space bettwen icons
             var textMarginTop = iconMarginBottom = iconSpace*2;
@@ -54,14 +57,19 @@
             $(".line").height(lineH); //Height of name (relative to its width)
             $(".line").width(lineW); //Set name width relative to stage width
 
+            $("#drag").height(dragH); //Height of name (relative to its width)
+            $("#drag").width(dragW); //Set name width relative to stage width
+            $("#drag").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
+
             $("#text").height(textH); //Height of name (relative to its width)
             $("#text").width(textW); //Set name width relative to stage width
-            $("#text").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
+            //$("#text").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
             $("#text").css("margin-bottom", textMarginBottom+"px"); //Set name width relative to stage width
 
 			$("#icons").height(iconSize); //Set wrapper width relative to stage width
             $("#icons").width(iconW); //Set wrapper width relative to stage width
-            $("#icons").css("margin-bottom", iconMarginBottom+"px"); //Set name width relative to stage width
+            $("#icons").css("margin-top", textMarginTop/4+"px"); //Set name width relative to stage width
+            $("#icons").css("margin-bottom", textMarginBottom/4+"px"); //Set name width relative to stage width
 
 			$("#backer").height(backerH); //Height of backer (relative to its height)
 			$("#backer").width(backerW); //Width of backer (relative to its height)
@@ -117,9 +125,9 @@
 
         <div id="backer">
 
-            <div class="line"></div>
                 <div id="text" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
 
+                <div class="line"></div>
                 <div id="icons">
                     <div id="google" title="Google+"></div>
                     <div id="facebook" title="Facebook"></div>
@@ -130,7 +138,9 @@
                     <div id="instagram" title="Instagram"></div>
                     <div id="publications" title="Publications"></div>
                 </div>
-            <div class="line"></div>
+                <div class="line"></div>
+            <div id="drag"></div>
+
         </div>
     </div>
 </body>
