@@ -16,10 +16,71 @@
 	<!-- Include content resize script -->
 	<script type="text/javascript" src="scripts/resize.js"></script>
 
-	<!-- Scripts -->
+	<!-- ScrFOREGROUNDs -->
 	<script>
-		//Called by resize.js when the page needs to be loaded
+
+        var stageForeground;
+        var FOREGROUND;
+        var offsetX, offsetY;
+        var OPACITY = 1;
+
+        var backerX;
+        var backerY;
+        var backerH;
+        var backerW;
+        var textX;
+        var textY;
+
+        function mouseMoveListener(evt) {
+            //Get mouse position
+            var bRect = stageForeground.getBoundingClientRect();
+            var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
+            var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
+
+            var temp = Math.abs(1/((mouseX-offsetX)/100));
+            console.log(temp);
+
+            if (temp > 1) {OPACITY = 1;} else {OPACITY = temp;}
+
+            backerX = (BODY_WIDTH/2)-(backerW/2)+(mouseX-offsetX);
+            backerY = (BODY_HEIGHT/2)-(backerH/2)+(mouseY-offsetY);
+
+            draw();
+
+            return false;
+        }
+
+        function mouseDownListener(evt) {
+
+            //Get mouse position
+            var bRect = stageForeground.getBoundingClientRect();
+            var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
+            var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
+
+            offsetX = mouseX;
+            offsetY = mouseY;
+
+            window.addEventListener("mousemove", mouseMoveListener, false);
+
+            //code below prevents the mouse down from having an effect on the main browser window:
+            if (evt.preventDefault) {
+                evt.preventDefault();
+            } //standard
+            else if (evt.returnValue) {
+                evt.returnValue = false;
+            } //older IE
+
+            return false;
+        }
+
+
+
+        //Called by resize.js when the page needs to be loaded
 		function pageLoad() {
+
+            stageForeground = document.getElementById('stageForeground');
+            FOREGROUND = stageForeground.getContext('2d');
+            stageForeground.addEventListener("mousedown", mouseDownListener, false);
 
 			//Create a min. relative stage size (looks better smaller on bigger screens)
 			var MAX_SIZE = 500;
@@ -30,7 +91,8 @@
                 stageW = SCALE;
             }
 
-            var backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
+            backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
+
             var backerMargin = (BODY_HEIGHT-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
 
 			//Setup key variables for displaying different elements
@@ -57,6 +119,9 @@
             $(".line").height(lineH); //Height of name (relative to its width)
             $(".line").width(lineW); //Set name width relative to stage width
 
+            $("#stageForeground").prop('width', BODY_WIDTH)
+            $("#stageForeground").prop('height', BODY_HEIGHT)
+
             $("#drag").height(dragH); //Height of name (relative to its width)
             $("#drag").width(dragW); //Set name width relative to stage width
             $("#drag").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
@@ -75,6 +140,11 @@
 			$("#backer").width(backerW); //Width of backer (relative to its height)
             $("#backer").css("margin-top", backerMargin+"px"); //Set name width relative to stage width
             $("#backer").css("padding-top", backerPadding+"px"); //Set name width relative to stage width
+
+
+            backerX = (BODY_WIDTH/2)-(backerW/2);
+            backerY = (BODY_HEIGHT/2)-(backerH/2);
+            draw();
 
 			//Handle all the icons
 			var iconID = new Array();
@@ -114,6 +184,60 @@
 				} else {$("#"+iconID[x]).css("margin-right", iconSpace);}
 			}
 		}
+
+
+        function draw() {
+			//Create a min. relative stage size (looks better smaller on bigger screens)
+			var MAX_SIZE = 500;
+            var SCALE_FACTOR = 0.6; //Scale everything to be 80% min. size
+            var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
+
+            if (MAX_SIZE >= SCALE) {
+                stageW = SCALE;
+            }
+
+            backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
+
+            var backerMargin = (BODY_HEIGHT-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
+
+			//Setup key variables for displaying different elements
+            var iconW = textW = lineW = (backerW*0.8);
+            var dragW = (backerW*0.6);
+            var dragH = dragW/3
+
+
+            var iconSpace = SCALE/100; //Space bettwen icons
+            var textMarginTop = iconMarginBottom = iconSpace*2;
+            var textMarginBottom = iconSpace*2;
+
+			var iconNumber = 8; //Icons per line
+
+			//Set icon size based on icon spacing and number per line
+			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
+
+            var textH = textW/2.54; //Set text height relative to SVG LxW
+            var lineH = Math.ceil(iconSpace/3);
+
+            var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
+
+            //Canvas Stuff
+            FOREGROUND.clearRect(0, 0, BODY_WIDTH, BODY_HEIGHT);
+
+
+            textX = backerX+((backerW/2)-(textW/2));
+            textY = backerY+((backerH/2)-(textH/2));
+
+            var img_circle = new Image();
+            img_circle.src = "images/circle.svg";
+            FOREGROUND.globalAlpha=OPACITY;
+            FOREGROUND.drawImage(img_circle, backerX, backerY, backerW, backerH);
+
+            var img_text = new Image();
+            img_text.src = "images/textA.svg";
+            FOREGROUND.globalAlpha=OPACITY/1.5;
+            FOREGROUND.drawImage(img_text, textX, textY, textW, textH);
+        }
+
 	</script>
 </head>
 
@@ -121,8 +245,8 @@
 <body>
     <?php include_once("analyticstracking.php") ?>
     <div id="preload"></div>
+    <canvas id="stageForeground"></canvas>
 	<div id="background">
-
         <div id="backer">
 
                 <div id="text" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
