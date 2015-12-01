@@ -16,18 +16,20 @@
 	<!-- Include content resize script -->
 	<script type="text/javascript" src="scripts/resize.js"></script>
 
-	<!-- ScrFOREGROUNDs -->
+	<!-- FOREGROUND -->
 	<script>
 
         var stageForeground;
         var FOREGROUND;
         var offsetX, offsetY;
-        var OPACITY = 1;
+        var OPACITY = 0.8;
+        var DRAGGING = false;
 
-        var backerX;
-        var backerY;
-        var backerH;
-        var backerW;
+        var STARTUP = true; //Do different stuff when the page first loads
+        var REPORT = false; //Debugging ON/OFF
+
+        var displayObjects = new Array();
+
         var textX;
         var textY;
 
@@ -37,19 +39,38 @@
             var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
             var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
 
-            var temp = Math.abs(1/((mouseX-offsetX)/100));
-            console.log(temp);
+           // var temp = Math.abs(((mouseX-offsetX)));
+            //console.log(temp);
+            //container.W = container.H = temp;
+            //if (temp > 1) {OPACITY = 1;} else {OPACITY = temp;}
 
-            if (temp > 1) {OPACITY = 1;} else {OPACITY = temp;}
+            DRAGGING.X = DRAGGING.Xori + (mouseX-offsetX);
+            DRAGGING.Y = DRAGGING.Yori + (mouseY-offsetY);
 
-            backerX = (BODY_WIDTH/2)-(backerW/2)+(mouseX-offsetX);
-            backerY = (BODY_HEIGHT/2)-(backerH/2)+(mouseY-offsetY);
+            //Make sure it everything stays within the screen
+            var radius = (DRAGGING.H + DRAGGING.W) / 4;
+
+            if ((DRAGGING.X - radius) < 0) {DRAGGING.X = radius;}
+            else if ((DRAGGING.X + radius) > BODY_WIDTH) {DRAGGING.X = BODY_WIDTH - radius;}
+
+            if ((DRAGGING.Y - radius) < 0) {DRAGGING.Y = radius;}
+            else if ((DRAGGING.Y + radius) > BODY_HEIGHT) {DRAGGING.Y = BODY_HEIGHT - radius;}
 
             draw();
 
             return false;
         }
 
+        function mouseUpListener(evt) {
+            stageForeground.addEventListener("mousedown", mouseDownListener, false);
+            window.removeEventListener("mouseup", mouseUpListener, false);
+            if (DRAGGING) {
+                DRAGGING = false;
+                stageForeground.removeEventListener("mousemove", mouseMoveListener, false);
+            }
+        }
+
+        //When there is a mouse click
         function mouseDownListener(evt) {
 
             //Get mouse position
@@ -57,11 +78,28 @@
             var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
             var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
 
-            offsetX = mouseX;
-            offsetY = mouseY;
+            //Check if the mouse is in a circle (work backwards through array to maintain z-index)
+            for (x = (displayObjects.length - 1); x >= 0; x--) {
+                var object = displayObjects[x];
+                var radiusSquared = Math.pow(((object.H + object.W) / 4), 2);
+                var mouseSquared = Math.pow((mouseX - object.X), 2) + Math.pow((mouseY - object.Y), 2);
 
-            window.addEventListener("mousemove", mouseMoveListener, false);
+                //Check if mouse X/Y are inside of the circle
+                if (mouseSquared < radiusSquared) {
 
+                        offsetX = mouseX; offsetY = mouseY;
+                        object.Xori = object.X; object.Yori = object.Y;
+
+                        DRAGGING = object;
+                        stageForeground.addEventListener("mousemove", mouseMoveListener, false);
+
+                        stageForeground.removeEventListener("mousedown", mouseDownListener, false);
+                        window.addEventListener("mouseup", mouseUpListener, false);
+
+                        return true;
+                }
+
+        }
             //code below prevents the mouse down from having an effect on the main browser window:
             if (evt.preventDefault) {
                 evt.preventDefault();
@@ -78,9 +116,20 @@
         //Called by resize.js when the page needs to be loaded
 		function pageLoad() {
 
-            stageForeground = document.getElementById('stageForeground');
-            FOREGROUND = stageForeground.getContext('2d');
-            stageForeground.addEventListener("mousedown", mouseDownListener, false);
+            //When the page first loads do different stuff, housekeeping mostly
+            if (STARTUP) {
+                //Setup the canvas variables
+                stageForeground = document.getElementById('stageForeground');
+                FOREGROUND = stageForeground.getContext('2d');
+
+                //Preload images here!
+
+                //Add a listener for mousedown
+                stageForeground.addEventListener("mousedown", mouseDownListener, false);
+                STARTUP = false;
+            }
+
+
 
 			//Create a min. relative stage size (looks better smaller on bigger screens)
 			var MAX_SIZE = 500;
@@ -91,65 +140,76 @@
                 stageW = SCALE;
             }
 
-            backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
-
-            var backerMargin = (BODY_HEIGHT-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
-
-			//Setup key variables for displaying different elements
-            var iconW = textW = lineW = (backerW*0.8);
-            var dragW = (backerW*0.6);
-            var dragH = dragW/3
-
-
-            var iconSpace = SCALE/100; //Space bettwen icons
-            var textMarginTop = iconMarginBottom = iconSpace*2;
-            var textMarginBottom = iconSpace*2;
-
-			var iconNumber = 8; //Icons per line
-
-			//Set icon size based on icon spacing and number per line
-			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
-
-            var textH = textW/2.54; //Set text height relative to SVG LxW
-            var lineH = Math.ceil(iconSpace/3);
-
-            var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
-
 			//Set size of constant DIVs
-            $(".line").height(lineH); //Height of name (relative to its width)
-            $(".line").width(lineW); //Set name width relative to stage width
-
             $("#stageForeground").prop('width', BODY_WIDTH)
             $("#stageForeground").prop('height', BODY_HEIGHT)
 
-            $("#drag").height(dragH); //Height of name (relative to its width)
-            $("#drag").width(dragW); //Set name width relative to stage width
-            $("#drag").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
+            //Setup containers for display
+            displayObjects = []; //Empty display array
 
-            $("#text").height(textH); //Height of name (relative to its width)
-            $("#text").width(textW); //Set name width relative to stage width
-            //$("#text").css("margin-top", textMarginTop+"px"); //Set name width relative to stage width
-            $("#text").css("margin-bottom", textMarginBottom+"px"); //Set name width relative to stage width
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)), //current X position
+                Y: Math.round((BODY_HEIGHT/2)), //current Y position
+                Xold: Math.round((BODY_WIDTH/2)), //last X position
+                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
+                Xori: Math.round((BODY_WIDTH/2)), //original X position
+                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
+                H: Math.round((SCALE*SCALE_FACTOR)), //Height
+                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                image: "images/circle3.svg", //image location
+                text: {
+                    X: 0,
+                    Y: 0,
+                    H: 0,
+                    W: 0,
+                    image: ""
+                }
+            }; displayObjects.push(newObject);
 
-			$("#icons").height(iconSize); //Set wrapper width relative to stage width
-            $("#icons").width(iconW); //Set wrapper width relative to stage width
-            $("#icons").css("margin-top", textMarginTop/4+"px"); //Set name width relative to stage width
-            $("#icons").css("margin-bottom", textMarginBottom/4+"px"); //Set name width relative to stage width
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)), //current X position
+                Y: Math.round((BODY_HEIGHT/2)), //current Y position
+                Xold: Math.round((BODY_WIDTH/2)), //last X position
+                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
+                Xori: Math.round((BODY_WIDTH/2)), //original X position
+                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
+                H: Math.round((SCALE*SCALE_FACTOR)), //Height
+                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                image: "images/circle2.svg", //image location
+                text: {
+                    X: 0,
+                    Y: 0,
+                    H: 0,
+                    W: 0,
+                    image: ""
+                }
+            }; displayObjects.push(newObject);
 
-			$("#backer").height(backerH); //Height of backer (relative to its height)
-			$("#backer").width(backerW); //Width of backer (relative to its height)
-            $("#backer").css("margin-top", backerMargin+"px"); //Set name width relative to stage width
-            $("#backer").css("padding-top", backerPadding+"px"); //Set name width relative to stage width
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)), //current X position
+                Y: Math.round((BODY_HEIGHT/2)), //current Y position
+                Xold: Math.round((BODY_WIDTH/2)), //last X position
+                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
+                Xori: Math.round((BODY_WIDTH/2)), //original X position
+                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
+                H: Math.round((SCALE*SCALE_FACTOR)), //Height
+                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                image: "images/circle1.svg", //image location
+                text: {
+                    X: 0,
+                    Y: 0,
+                    H: 0,
+                    W: 0,
+                    image: "images/textA.svg"
+                }
+            }; displayObjects.push(newObject);
 
-
-            backerX = (BODY_WIDTH/2)-(backerW/2);
-            backerY = (BODY_HEIGHT/2)-(backerH/2);
             draw();
 
 			//Handle all the icons
-			var iconID = new Array();
-			iconID = ["google", "facebook", "twitter", "github", "keybase", "links", "instagram", "publications"];
-			//Loop through each icon ID
+			//var iconID = new Array();
+			//iconID = ["google", "facebook", "twitter", "github", "keybase", "links", "instagram", "publications"];
+			/*/Loop through each icon ID
 			for (var x = 0; x < iconID.length; x++) {
 
 				//Sort out common icon attributes
@@ -182,63 +242,109 @@
 				if (x === (iconNumber-1) || x === ((iconNumber*2)-1)) {
 					$("#"+iconID[x]).css("margin-right", 0); //End icons don't get a margin
 				} else {$("#"+iconID[x]).css("margin-right", iconSpace);}
-			}
+			}*/
 		}
 
+/******************************************************************
+*********************     Draw Everything     *********************
+******************************************************************/
+function draw() {
+    var globalSpace = Math.ceil(SCALE/100);
 
-        function draw() {
-			//Create a min. relative stage size (looks better smaller on bigger screens)
-			var MAX_SIZE = 500;
-            var SCALE_FACTOR = 0.6; //Scale everything to be 80% min. size
-            var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
+    //Clear canvas first before drawing anything new
+    FOREGROUND.clearRect(0, 0, BODY_WIDTH, BODY_HEIGHT);
 
-            if (MAX_SIZE >= SCALE) {
-                stageW = SCALE;
-            }
+    //Loop through all the objects that need to be drawn to the screen
+    displayObjects.forEach(function(object) {
+        reportLog(object); //Report object to log
+        reportLog("X,Y,W,H - "+object.X+","+object.Y+","+object.W+","+object.H); //Report coords to log
 
-            backerH = backerW = (SCALE*SCALE_FACTOR); //Set the backer circle size
+        FOREGROUND.globalAlpha = OPACITY;
 
-            var backerMargin = (BODY_HEIGHT-(SCALE*SCALE_FACTOR))/2; //Set the top margin to center the circle
+        //Draw the background circle from X/Y center point
+        var img_circle = new Image(); img_circle.src = object.image;
+        FOREGROUND.drawImage(img_circle, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
 
-			//Setup key variables for displaying different elements
-            var iconW = textW = lineW = (backerW*0.8);
-            var dragW = (backerW*0.6);
-            var dragH = dragW/3
+        //Update old values
+        object.Xold = object.X;
+        object.Yold = object.Y;
 
+        FOREGROUND.globalAlpha = OPACITY/1.5;
 
-            var iconSpace = SCALE/100; //Space bettwen icons
-            var textMarginTop = iconMarginBottom = iconSpace*2;
-            var textMarginBottom = iconSpace*2;
+        var X1, X2, Y1, Y2, W, H;
 
-			var iconNumber = 8; //Icons per line
+        //Draw the text in the background
+        if (object.text.image) {
+            W = (object.W*0.8);
+            H = W/2.54;
+            X1 = object.X-(W/2);
+            X2 = object.X-(W/2);
+            Y1 = object.Y-(H/2)-(globalSpace*5);
+            Y2 = object.Y-(H/2)-(globalSpace*5);
 
-			//Set icon size based on icon spacing and number per line
-			var iconSize = (iconW/iconNumber)-(iconSpace*((iconNumber-1)/iconNumber));
-
-            var textH = textW/2.54; //Set text height relative to SVG LxW
-            var lineH = Math.ceil(iconSpace/3);
-
-            var backerPadding = (backerH/2)-((textH+textMarginBottom+textMarginTop+iconSize+(lineH*4))/2); //Set the top padding to center the content
-
-            //Canvas Stuff
-            FOREGROUND.clearRect(0, 0, BODY_WIDTH, BODY_HEIGHT);
-
-
-            textX = backerX+((backerW/2)-(textW/2));
-            textY = backerY+((backerH/2)-(textH/2));
-
-            var img_circle = new Image();
-            img_circle.src = "images/circle.svg";
-            FOREGROUND.globalAlpha=OPACITY;
-            FOREGROUND.drawImage(img_circle, backerX, backerY, backerW, backerH);
-
-            var img_text = new Image();
-            img_text.src = "images/textA.svg";
-            FOREGROUND.globalAlpha=OPACITY/1.5;
-            FOREGROUND.drawImage(img_text, textX, textY, textW, textH);
+            var img_text = new Image(); img_text.src = object.text.image;
+            FOREGROUND.drawImage(img_text, X1, Y1, W, H);
         }
 
-	</script>
+        //Draw top line
+        var lineWidth = Math.ceil(globalSpace/3);
+        X1 = X1;
+        Y1 += H+(globalSpace*2)
+        X2 += W;
+        Y2 += H+(globalSpace*2);
+
+        FOREGROUND.beginPath();
+        FOREGROUND.moveTo(X1, Y1);
+        FOREGROUND.lineTo(X2, Y2);
+        FOREGROUND.lineWidth = lineWidth;
+        FOREGROUND.strokeStyle = '#FFFFFF';
+        FOREGROUND.stroke();
+        FOREGROUND.closePath();
+
+        //Draw icons
+        var iconNumber = 8;
+        H = (W/iconNumber)-(globalSpace*((iconNumber-1)/iconNumber));
+        W = (W/iconNumber)-(globalSpace*((iconNumber-1)/iconNumber));
+        Y1 += lineWidth + (globalSpace/2);
+        Y2 += lineWidth + (globalSpace/2);
+
+        var image = new Image(); image.src = "images/facebookA.svg";
+        FOREGROUND.drawImage(image, X1, Y1, W, H);
+
+        //Draw bottom line
+        var lineWidth = Math.ceil(globalSpace/3);
+        X1 = X1;
+        Y1 += H+lineWidth+(globalSpace/2);
+        X2 = X2;
+        Y2 += H+lineWidth+(globalSpace/2);
+
+        FOREGROUND.beginPath();
+        FOREGROUND.moveTo(X1, Y1);
+        FOREGROUND.lineTo(X2, Y2);
+        FOREGROUND.lineWidth = lineWidth;
+        FOREGROUND.strokeStyle = '#FFFFFF';
+        FOREGROUND.stroke();
+        FOREGROUND.closePath();
+
+        //Draw drag text
+        W = (object.W*0.6);
+        H = W/3;
+        X1 = object.X-(W/2);
+        Y1 = Y1+(globalSpace);
+
+        var image = new Image(); image.src = "images/drag.svg";
+        FOREGROUND.drawImage(image, X1, Y1, W, H);
+
+    });
+}
+
+//Report to console function set REPORT = true for debugging
+function reportLog(text) {
+    if (REPORT) {console.log(text);}
+    return false;
+}
+
+</script>
 </head>
 
 <!-- BODY -->
