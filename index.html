@@ -19,30 +19,31 @@
 	<!-- FOREGROUND -->
 	<script>
 
-        var stageForeground;
-        var FOREGROUND;
-        var offsetX, offsetY;
-        var OPACITY = 0.8;
-        var DRAGGING = false;
-
+        var stageForeground, FOREGROUND; //The foreground canvas
         var STARTUP = true; //Do different stuff when the page first loads
         var REPORT = false; //Debugging ON/OFF
+        var OPACITY = 0.8; //Global oppacity value
+        var DRAGGING = false; //Object being dragged (or not)
+        var PULSE = 0;
 
-        var displayObjects = new Array();
+        var displayObjects = new Array(); //All objects drawn to the scree
+        var offsetX, offsetY; //The offset of the objects from the center when dragging
 
-        var textX;
-        var textY;
+        //Animation loop stuff
+        var fps = 30;
+        var now;
+        var then = Date.now();
+        var interval = 1000/fps;
+        var delta;
+
+
+
 
         function mouseMoveListener(evt) {
             //Get mouse position
             var bRect = stageForeground.getBoundingClientRect();
             var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
             var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
-
-           // var temp = Math.abs(((mouseX-offsetX)));
-            //console.log(temp);
-            //container.W = container.H = temp;
-            //if (temp > 1) {OPACITY = 1;} else {OPACITY = temp;}
 
             DRAGGING.X = DRAGGING.Xori + (mouseX-offsetX);
             DRAGGING.Y = DRAGGING.Yori + (mouseY-offsetY);
@@ -55,6 +56,9 @@
 
             if ((DRAGGING.Y - radius) < 0) {DRAGGING.Y = radius;}
             else if ((DRAGGING.Y + radius) > BODY_HEIGHT) {DRAGGING.Y = BODY_HEIGHT - radius;}
+
+            //Check for collisions with other circles
+            //UHH???
 
             draw();
 
@@ -85,7 +89,7 @@
                 var mouseSquared = Math.pow((mouseX - object.X), 2) + Math.pow((mouseY - object.Y), 2);
 
                 //Check if mouse X/Y are inside of the circle
-                if (mouseSquared < radiusSquared) {
+                if ((mouseSquared < radiusSquared) && object.draggable === true) {
 
                         offsetX = mouseX; offsetY = mouseY;
                         object.Xori = object.X; object.Yori = object.Y;
@@ -96,7 +100,7 @@
                         stageForeground.removeEventListener("mousedown", mouseDownListener, false);
                         window.addEventListener("mouseup", mouseUpListener, false);
 
-                        return true;
+                        break;
                 }
 
         }
@@ -156,14 +160,21 @@
                 Yori: Math.round((BODY_HEIGHT/2)), //original Y position
                 H: Math.round((SCALE*SCALE_FACTOR)), //Height
                 W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                image: "images/circle0.svg", //image location
+                draggable: false
+            }; displayObjects.push(newObject);
+
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)), //current X position
+                Y: Math.round((BODY_HEIGHT/2)), //current Y position
+                Xold: Math.round((BODY_WIDTH/2)), //last X position
+                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
+                Xori: Math.round((BODY_WIDTH/2)), //original X position
+                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
+                H: Math.round((SCALE*SCALE_FACTOR)), //Height
+                W: Math.round((SCALE*SCALE_FACTOR)), //Width
                 image: "images/circle3.svg", //image location
-                text: {
-                    X: 0,
-                    Y: 0,
-                    H: 0,
-                    W: 0,
-                    image: ""
-                }
+                draggable: true
             }; displayObjects.push(newObject);
 
             var newObject = {
@@ -176,13 +187,7 @@
                 H: Math.round((SCALE*SCALE_FACTOR)), //Height
                 W: Math.round((SCALE*SCALE_FACTOR)), //Width
                 image: "images/circle2.svg", //image location
-                text: {
-                    X: 0,
-                    Y: 0,
-                    H: 0,
-                    W: 0,
-                    image: ""
-                }
+                draggable: true
             }; displayObjects.push(newObject);
 
             var newObject = {
@@ -195,27 +200,14 @@
                 H: Math.round((SCALE*SCALE_FACTOR)), //Height
                 W: Math.round((SCALE*SCALE_FACTOR)), //Width
                 image: "images/circle1.svg", //image location
-                text: {
-                    X: 0,
-                    Y: 0,
-                    H: 0,
-                    W: 0,
-                    image: "images/textA.svg"
-                }
+                text: "images/textA.svg", //text location
+                draggable: true
             }; displayObjects.push(newObject);
 
-            draw();
+            // Start things off
+            requestAnimationFrame(mainLoop);
 
-			//Handle all the icons
-			//var iconID = new Array();
-			//iconID = ["google", "facebook", "twitter", "github", "keybase", "links", "instagram", "publications"];
 			/*/Loop through each icon ID
-			for (var x = 0; x < iconID.length; x++) {
-
-				//Sort out common icon attributes
-				$("#"+iconID[x]).height(iconSize); $("#"+iconID[x]).width(iconSize);
-				//$("#"+iconID[x]).css("float", "left");
-
 				//Add Onclick function
 				var onclickLocation;
 				if (iconID[x] === "google") {
@@ -235,13 +227,6 @@
 				} else if (iconID[x] === "links") {
 					onclickLocation = "http://www.open-gmo.org/";
 				}
-
-				$("#"+iconID[x]).attr('onclick', "window.location='"+onclickLocation+"';");
-
-				//Check if icon is on the end of a line or not
-				if (x === (iconNumber-1) || x === ((iconNumber*2)-1)) {
-					$("#"+iconID[x]).css("margin-right", 0); //End icons don't get a margin
-				} else {$("#"+iconID[x]).css("margin-right", iconSpace);}
 			}*/
 		}
 
@@ -269,26 +254,30 @@ function draw() {
         object.Xold = object.X;
         object.Yold = object.Y;
 
-        FOREGROUND.globalAlpha = OPACITY/1.5;
-
+        FOREGROUND.globalAlpha = OPACITY*0.5;
+if (object.text) {
+        //Draw the middle circle from X/Y center point
+        var img_circle = new Image(); img_circle.src = "images/link_text.svg";
+        FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3, object.H/3);
+}
         var X1, X2, Y1, Y2, W, H;
 
         //Draw the text in the background
-        if (object.text.image) {
-            W = (object.W*0.8);
+        if (object.text) {
+            W = (object.W*0.7);
             H = W/2.54;
-            X1 = object.X-(W/2);
-            X2 = object.X-(W/2);
+            X1 = object.X-((object.W*0.7)/2);
+            X2 = object.X-((object.W*0.7)/2);
             Y1 = object.Y-(H/2)-(globalSpace*5);
             Y2 = object.Y-(H/2)-(globalSpace*5);
 
-            var img_text = new Image(); img_text.src = object.text.image;
-            FOREGROUND.drawImage(img_text, X1, Y1, W, H);
+           // var image = new Image(); image.src = object.text;
+            //FOREGROUND.drawImage(image, X1, Y1, W, H);
         }
 
-        //Draw top line
+        /*/Draw top line
         var lineWidth = Math.ceil(globalSpace/3);
-        X1 = X1;
+        X1 = object.X-((object.W*0.7)/2);
         Y1 += H+(globalSpace*2)
         X2 += W;
         Y2 += H+(globalSpace*2);
@@ -297,34 +286,45 @@ function draw() {
         FOREGROUND.moveTo(X1, Y1);
         FOREGROUND.lineTo(X2, Y2);
         FOREGROUND.lineWidth = lineWidth;
-        FOREGROUND.strokeStyle = '#FFFFFF';
+        FOREGROUND.strokeStyle = '#000000';
         FOREGROUND.stroke();
-        FOREGROUND.closePath();
+        FOREGROUND.closePath();*/
 
         //Draw icons
         var iconNumber = 8;
-        H = (W/iconNumber)-(globalSpace*((iconNumber-1)/iconNumber));
-        W = (W/iconNumber)-(globalSpace*((iconNumber-1)/iconNumber));
-        Y1 += lineWidth + (globalSpace/2);
-        Y2 += lineWidth + (globalSpace/2);
+        H = (W/(iconNumber/2.5));
+        W = (W/(iconNumber/2.5));
+   //     Y1 += lineWidth + (globalSpace/2);
+   //     Y2 += lineWidth + (globalSpace/2);
 
-        var image = new Image(); image.src = "images/facebookA.svg";
-        FOREGROUND.drawImage(image, X1, Y1, W, H);
+        var iconID = new Array();
+		iconID = ["google", "facebook", "twitter", "github", "keybase", "links", "instagram", "publications"];
+        var points = calcPointsCirc(object.X, object.Y, ((object.W+object.H)/6.8), ((object.W+object.H)/6.8)/(iconID.length*2));
 
-        //Draw bottom line
+        for (var x = 0; x < (iconID.length); x++) {
+            X1 = points[x].x;
+            Y1 = points[x].y;
+            var image = new Image(); image.src = "images/"+iconID[x]+"A.svg";
+            FOREGROUND.drawImage(image, (X1-(W/2)), (Y1-(H/2)), W, H);
+           // X1 += W + globalSpace/2;
+
+
+        }
+
+        /*/Draw bottom line
         var lineWidth = Math.ceil(globalSpace/3);
-        X1 = X1;
-        Y1 += H+lineWidth+(globalSpace/2);
+        X1 = object.X-((object.W*0.7)/2);
+        Y1 = 20+lineWidth+(globalSpace/2);
         X2 = X2;
-        Y2 += H+lineWidth+(globalSpace/2);
+        Y2 = 20+lineWidth+(globalSpace/2);
 
         FOREGROUND.beginPath();
         FOREGROUND.moveTo(X1, Y1);
         FOREGROUND.lineTo(X2, Y2);
         FOREGROUND.lineWidth = lineWidth;
-        FOREGROUND.strokeStyle = '#FFFFFF';
+        FOREGROUND.strokeStyle = '#000000';
         FOREGROUND.stroke();
-        FOREGROUND.closePath();
+        FOREGROUND.closePath();*/
 
         //Draw drag text
         W = (object.W*0.6);
@@ -332,8 +332,8 @@ function draw() {
         X1 = object.X-(W/2);
         Y1 = Y1+(globalSpace);
 
-        var image = new Image(); image.src = "images/drag.svg";
-        FOREGROUND.drawImage(image, X1, Y1, W, H);
+       // var image = new Image(); image.src = "images/drag.svg";
+       // FOREGROUND.drawImage(image, X1, Y1, W, H);
 
     });
 }
@@ -343,6 +343,60 @@ function reportLog(text) {
     if (REPORT) {console.log(text);}
     return false;
 }
+
+//Get points along a circle
+function calcPointsCirc(cx, cy, rad, dashLength) {
+    var n = rad/dashLength,
+        alpha = Math.PI * 2 / n,
+        pointObj = {},
+        points = [],
+        i = -1;
+
+    while( i < n ) {
+        var theta = alpha * i,
+            theta2 = alpha * (i+1);
+
+        points.push({x : (Math.cos(theta) * rad) + cx, y : (Math.sin(theta) * rad) + cy, ex : (Math.cos(theta2) * rad) + cx, ey : (Math.sin(theta2) * rad) + cy});
+        i+=2;
+    }
+
+    return points;
+}
+
+//Update math
+function update() {
+    now = Date.now();
+    delta = now - then;
+
+    if (delta > interval) {
+
+        displayObjects.forEach(function(object) {
+            if (PULSE >= 0) {
+                object.W++;
+                object.H++;
+            } else if (PULSE < 0) {
+                object.W--;
+                object.H--;
+            }
+        });
+
+        if (PULSE === 5) {PULSE = -7;}
+        PULSE++;
+
+        then = now - (delta % interval);
+    }
+
+    return false;
+}
+
+//This is the main loop
+function mainLoop() {
+    update();
+    draw();
+    requestAnimationFrame(mainLoop);
+}
+
+
 
 </script>
 </head>
