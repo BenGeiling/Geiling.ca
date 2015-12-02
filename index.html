@@ -24,6 +24,7 @@
         var REPORT = false; //Debugging ON/OFF
         var OPACITY = 0.8; //Global oppacity value
         var DRAGGING = false; //Object being dragged (or not)
+        var HOVERING = false; //Object being hovered (or not)
         var PULSE = 0;
 
         var displayObjects = new Array(); //All objects drawn to the scree
@@ -35,9 +36,6 @@
         var then = Date.now();
         var interval = 1000/fps;
         var delta;
-
-
-
 
         function mouseMoveListener(evt) {
             //Get mouse position
@@ -57,12 +55,28 @@
             if ((DRAGGING.Y - radius) < 0) {DRAGGING.Y = radius;}
             else if ((DRAGGING.Y + radius) > BODY_HEIGHT) {DRAGGING.Y = BODY_HEIGHT - radius;}
 
+            //Check if the mouse is in a circle (work backwards through array to maintain z-index)
+            HOVERING = false;
+            for (x = (displayObjects.length - 1); x >= 0; x--) {
+                var object = displayObjects[x];
+                var radiusSquared = Math.pow(((object.H + object.W) / 4), 2);
+                var mouseSquared = Math.pow((mouseX - object.X), 2) + Math.pow((mouseY - object.Y), 2);
+
+                //Check if mouse X/Y are inside of the circle
+                if ((mouseSquared < radiusSquared) && object.draggable === true) {
+
+                        HOVERING = object;
+                        break;
+                }
+
+            }
             //Check for collisions with other circles
             //UHH???
 
             draw();
 
             return false;
+
         }
 
         function mouseUpListener(evt) {
@@ -70,7 +84,7 @@
             window.removeEventListener("mouseup", mouseUpListener, false);
             if (DRAGGING) {
                 DRAGGING = false;
-                stageForeground.removeEventListener("mousemove", mouseMoveListener, false);
+                //stageForeground.removeEventListener("mousemove", mouseMoveListener, false);
             }
         }
 
@@ -95,7 +109,7 @@
                         object.Xori = object.X; object.Yori = object.Y;
 
                         DRAGGING = object;
-                        stageForeground.addEventListener("mousemove", mouseMoveListener, false);
+                       // stageForeground.addEventListener("mousemove", mouseMoveListener, false);
 
                         stageForeground.removeEventListener("mousedown", mouseDownListener, false);
                         window.addEventListener("mouseup", mouseUpListener, false);
@@ -205,6 +219,7 @@
             }; displayObjects.push(newObject);
 
             // Start things off
+            stageForeground.addEventListener("mousemove", mouseMoveListener, false);
             requestAnimationFrame(mainLoop);
 
 			/*/Loop through each icon ID
@@ -246,6 +261,15 @@ function draw() {
 
         FOREGROUND.globalAlpha = OPACITY;
 
+        //Draw the background circle from X/Y center point
+      // if (HOVERING) {
+        var img_circle = new Image(); img_circle.src = "images/dots.svg";
+        FOREGROUND.drawImage(img_circle, object.X-(object.W*1.1/2), object.Y-(object.H*1.1/2), object.W*1.1, object.H*1.1);
+
+        var img_circle = new Image(); img_circle.src = "images/drag.svg";
+        FOREGROUND.drawImage(img_circle, object.X+object.W/2+28, object.Y-(50/2), 250, 50);
+
+        //}
         //Draw the background circle from X/Y center point
         var img_circle = new Image(); img_circle.src = object.image;
         FOREGROUND.drawImage(img_circle, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
