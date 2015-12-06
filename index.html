@@ -162,57 +162,65 @@
             $("#stageForeground").prop('width', BODY_WIDTH)
             $("#stageForeground").prop('height', BODY_HEIGHT)
 
+            var centerX = Math.round((BODY_WIDTH/2));
+            var centerY = Math.round((BODY_HEIGHT/2));
+            var standardSize = Math.round((SCALE*SCALE_FACTOR));
+
             //Setup containers for display
             displayObjects = []; //Empty display array
 
             var newObject = {
-                X: Math.round((BODY_WIDTH/2)), //current X position
-                Y: Math.round((BODY_HEIGHT/2)), //current Y position
-                Xold: Math.round((BODY_WIDTH/2)), //last X position
-                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
-                Xori: Math.round((BODY_WIDTH/2)), //original X position
-                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
-                H: Math.round((SCALE*SCALE_FACTOR)), //Height
-                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                name: "background",
+                X: centerX, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize*2, //Height
+                W: standardSize*2, //Width
                 image: "images/circle0.svg", //image location
                 draggable: false
             }; displayObjects.push(newObject);
 
             var newObject = {
-                X: Math.round((BODY_WIDTH/2)), //current X position
-                Y: Math.round((BODY_HEIGHT/2)), //current Y position
-                Xold: Math.round((BODY_WIDTH/2)), //last X position
-                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
-                Xori: Math.round((BODY_WIDTH/2)), //original X position
-                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
-                H: Math.round((SCALE*SCALE_FACTOR)), //Height
-                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                name: "page3",
+                X: centerX, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize, //Height
+                W: standardSize, //Width
                 image: "images/circle3.svg", //image location
                 draggable: true
             }; displayObjects.push(newObject);
 
             var newObject = {
-                X: Math.round((BODY_WIDTH/2)), //current X position
-                Y: Math.round((BODY_HEIGHT/2)), //current Y position
-                Xold: Math.round((BODY_WIDTH/2)), //last X position
-                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
-                Xori: Math.round((BODY_WIDTH/2)), //original X position
-                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
-                H: Math.round((SCALE*SCALE_FACTOR)), //Height
-                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                name: "page2",
+                X: centerX, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize, //Height
+                W: standardSize, //Width
                 image: "images/circle2.svg", //image location
                 draggable: true
             }; displayObjects.push(newObject);
 
             var newObject = {
-                X: Math.round((BODY_WIDTH/2)), //current X position
-                Y: Math.round((BODY_HEIGHT/2)), //current Y position
-                Xold: Math.round((BODY_WIDTH/2)), //last X position
-                Yold: Math.round((BODY_HEIGHT/2)), //last Y position
-                Xori: Math.round((BODY_WIDTH/2)), //original X position
-                Yori: Math.round((BODY_HEIGHT/2)), //original Y position
-                H: Math.round((SCALE*SCALE_FACTOR)), //Height
-                W: Math.round((SCALE*SCALE_FACTOR)), //Width
+                name: "page1",
+                X: centerX, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize, //Height
+                W: standardSize, //Width
                 image: "images/circle1.svg", //image location
                 text: "images/textA.svg", //text location
                 draggable: true
@@ -259,17 +267,12 @@ function draw() {
         reportLog(object); //Report object to log
         reportLog("X,Y,W,H - "+object.X+","+object.Y+","+object.W+","+object.H); //Report coords to log
 
-        FOREGROUND.globalAlpha = OPACITY;
+        FOREGROUND.globalAlpha = 1;//OPACITY;
 
         //Draw the background circle from X/Y center point
       // if (HOVERING) {
-        var img_circle = new Image(); img_circle.src = "images/dots.svg";
-        FOREGROUND.drawImage(img_circle, object.X-(object.W*1.1/2), object.Y-(object.H*1.1/2), object.W*1.1, object.H*1.1);
-
-        var img_circle = new Image(); img_circle.src = "images/drag.svg";
-        FOREGROUND.drawImage(img_circle, object.X+object.W/2+28, object.Y-(50/2), 250, 50);
-
         //}
+
         //Draw the background circle from X/Y center point
         var img_circle = new Image(); img_circle.src = object.image;
         FOREGROUND.drawImage(img_circle, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
@@ -279,15 +282,20 @@ function draw() {
         object.Yold = object.Y;
 
         FOREGROUND.globalAlpha = OPACITY*0.5;
-if (object.text) {
+
+        if (object.name === "page1") {
+        //Draw the middle circle from X/Y center point
+       // var img_circle = new Image(); img_circle.src = "images/textA.svg";
+        //FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3*2, object.H/3);
+        }
+
+if (object.name === "page2") {
         //Draw the middle circle from X/Y center point
         var img_circle = new Image(); img_circle.src = "images/link_text.svg";
         FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3, object.H/3);
-}
-        var X1, X2, Y1, Y2, W, H;
 
-        //Draw the text in the background
-        if (object.text) {
+    var X1, X2, Y1, Y2, W, H;
+
             W = (object.W*0.7);
             H = W/2.54;
             X1 = object.X-((object.W*0.7)/2);
@@ -297,9 +305,8 @@ if (object.text) {
 
            // var image = new Image(); image.src = object.text;
             //FOREGROUND.drawImage(image, X1, Y1, W, H);
-        }
 
-        /*/Draw top line
+            /*/Draw top line
         var lineWidth = Math.ceil(globalSpace/3);
         X1 = object.X-((object.W*0.7)/2);
         Y1 += H+(globalSpace*2)
@@ -359,6 +366,8 @@ if (object.text) {
        // var image = new Image(); image.src = "images/drag.svg";
        // FOREGROUND.drawImage(image, X1, Y1, W, H);
 
+    }
+
     });
 }
 
@@ -395,12 +404,14 @@ function update() {
     if (delta > interval) {
 
         displayObjects.forEach(function(object) {
-            if (PULSE >= 0) {
-                object.W++;
-                object.H++;
-            } else if (PULSE < 0) {
-                object.W--;
-                object.H--;
+            if (object.draggable) {
+                if (PULSE >= 0) {
+                    object.W++;
+                    object.H++;
+                } else if (PULSE < 0) {
+                    object.W--;
+                    object.H--;
+                }
             }
         });
 
