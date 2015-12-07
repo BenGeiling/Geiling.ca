@@ -24,6 +24,7 @@
         var REPORT = false; //Debugging ON/OFF
         var OPACITY = 0.8; //Global oppacity value
         var DRAGGING = false; //Object being dragged (or not)
+            var firstDrag = false; //Check to ensure user "gets it"
         var HOVERING = false; //Object being hovered (or not)
         var PULSE = 0;
 
@@ -37,6 +38,20 @@
         var interval = 1000/fps;
         var delta;
 
+
+        function onScreen(object) {
+            var radius = (object.H + object.W) / 4;
+            var X, Y;
+
+            if ((object.X - radius) < 0) {X = radius;}
+            else if ((object.X + radius) > BODY_WIDTH) {X = BODY_WIDTH - radius;}
+
+            if ((object.Y - radius) < 0) {Y = radius;}
+            else if ((object.Y + radius) > BODY_HEIGHT) {Y = BODY_HEIGHT - radius;}
+
+            return {X:X, Y:Y};
+        }
+
         function mouseMoveListener(evt) {
             //Get mouse position
             var bRect = stageForeground.getBoundingClientRect();
@@ -47,13 +62,9 @@
             DRAGGING.Y = DRAGGING.Yori + (mouseY-offsetY);
 
             //Make sure it everything stays within the screen
-            var radius = (DRAGGING.H + DRAGGING.W) / 4;
-
-            if ((DRAGGING.X - radius) < 0) {DRAGGING.X = radius;}
-            else if ((DRAGGING.X + radius) > BODY_WIDTH) {DRAGGING.X = BODY_WIDTH - radius;}
-
-            if ((DRAGGING.Y - radius) < 0) {DRAGGING.Y = radius;}
-            else if ((DRAGGING.Y + radius) > BODY_HEIGHT) {DRAGGING.Y = BODY_HEIGHT - radius;}
+            var positionCheck = onScreen(DRAGGING);
+            if (positionCheck.X) {DRAGGING.X = positionCheck.X;}
+            if (positionCheck.Y) {DRAGGING.Y = positionCheck.Y;}
 
             //Check if the mouse is in a circle (work backwards through array to maintain z-index)
             HOVERING = false;
@@ -64,14 +75,43 @@
 
                 //Check if mouse X/Y are inside of the circle
                 if ((mouseSquared < radiusSquared) && object.draggable === true) {
-
                         HOVERING = object;
                         break;
                 }
 
             }
-            //Check for collisions with other circles
+
             //UHH???
+            displayObjects.forEach(function(object) {
+                if (DRAGGING.name !== object.name) {
+                if (DRAGGING.name === "page2" && object.name === "page1") {
+
+                    var minDistance = Math.pow((DRAGGING.H/2) + (object.H/2), 2);
+                    var xVector = Math.pow((DRAGGING.X-object.X), 2);
+                    var yVector = Math.pow((DRAGGING.Y-object.Y), 2);
+                    var currentDistance = (xVector + yVector);
+
+                    if (currentDistance < minDistance) {
+
+                        var updatedDistance = Math.sqrt(minDistance)-Math.sqrt(currentDistance);
+                        object.X = object.X - updatedDistance;
+
+                        //Make sure it everything stays within the screen
+                        var positionCheck = onScreen(object);
+                        if (positionCheck.X) {object.X = positionCheck.X;}
+                        if (positionCheck.Y) {object.Y = positionCheck.Y;}
+                        if (positionCheck.X || positionCheck.X) {
+                            var updatedRadius = Math.sqrt(currentDistance)-(DRAGGING.W/2);
+                            if (updatedRadius > 50) {
+                                object.H = updatedRadius*2;
+                                object.W = updatedRadius*2;
+                            }
+                        }
+
+                    }
+                }
+                }
+            });
 
             draw();
 
@@ -109,6 +149,7 @@
                         object.Xori = object.X; object.Yori = object.Y;
 
                         DRAGGING = object;
+                        if (!firstDrag) {firstDrag = true;}
                        // stageForeground.addEventListener("mousemove", mouseMoveListener, false);
 
                         stageForeground.removeEventListener("mousedown", mouseDownListener, false);
@@ -267,15 +308,22 @@ function draw() {
         reportLog(object); //Report object to log
         reportLog("X,Y,W,H - "+object.X+","+object.Y+","+object.W+","+object.H); //Report coords to log
 
-        FOREGROUND.globalAlpha = 1;//OPACITY;
-
         //Draw the background circle from X/Y center point
       // if (HOVERING) {
         //}
 
         //Draw the background circle from X/Y center point
-        var img_circle = new Image(); img_circle.src = object.image;
-        FOREGROUND.drawImage(img_circle, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
+        if (object.name === "background") {
+            if (!firstDrag) {
+                FOREGROUND.globalAlpha = 0.8;
+                var image = new Image(); image.src = object.image;
+                FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
+            }
+        } else {
+            FOREGROUND.globalAlpha = 1;
+            var image = new Image(); image.src = object.image;
+            FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
+        }
 
         //Update old values
         object.Xold = object.X;
@@ -289,7 +337,7 @@ function draw() {
         //FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3*2, object.H/3);
         }
 
-if (object.name === "page2") {
+if (object.name === "page3") {
         //Draw the middle circle from X/Y center point
         var img_circle = new Image(); img_circle.src = "images/link_text.svg";
         FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3, object.H/3);
