@@ -6,7 +6,8 @@ body
     padding: 0;
     overflow: hidden;
 
-    background: url('images/background.jpg') no-repeat center center fixed;
+   /* background: url('images/background.jpg') no-repeat center center fixed; */
+    background-color: #bc704e;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
