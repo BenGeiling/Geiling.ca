@@ -315,7 +315,7 @@ function draw() {
         //Draw the background circle from X/Y center point
         if (object.name === "background") {
             if (!firstDrag) {
-                FOREGROUND.globalAlpha = 0.8;
+                //FOREGROUND.globalAlpha = 0.8;
                 var image = new Image(); image.src = object.image;
                 FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
             }
@@ -329,7 +329,7 @@ function draw() {
         object.Xold = object.X;
         object.Yold = object.Y;
 
-        FOREGROUND.globalAlpha = OPACITY*0.5;
+       // FOREGROUND.globalAlpha = OPACITY*0.5;
 
         if (object.name === "page1") {
         //Draw the middle circle from X/Y center point

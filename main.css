@@ -6,8 +6,8 @@ body
     padding: 0;
     overflow: hidden;
 
-   /* background: url('images/background.jpg') no-repeat center center fixed; */
-    background-color: #bc704e;
+   background: url('images/background.jpg') no-repeat center center fixed;
+    background-color: #b59383;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -68,7 +68,7 @@ body
 {
     background: url('images/facebookA.svg') no-repeat;
     background-size: contain;
-    opacity: 0.8;
+    opacity: 1;
     float: left;
 }
 #facebook:hover
