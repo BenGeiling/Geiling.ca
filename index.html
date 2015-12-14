@@ -16,41 +16,57 @@
 	<!-- Include content resize script -->
 	<script type="text/javascript" src="scripts/resize.js"></script>
 
-	<!-- FOREGROUND -->
-	<script>
 
-        var stageForeground, FOREGROUND; //The foreground canvas
-        var STARTUP = true; //Do different stuff when the page first loads
-        var REPORT = false; //Debugging ON/OFF
-        var OPACITY = 0.8; //Global oppacity value
-        var DRAGGING = false; //Object being dragged (or not)
-            var firstDrag = false; //Check to ensure user "gets it"
-        var HOVERING = false; //Object being hovered (or not)
-        var PULSE = 0;
+</head>
 
-        var displayObjects = new Array(); //All objects drawn to the scree
-        var offsetX, offsetY; //The offset of the objects from the center when dragging
+<!-- BODY -->
+<body>
+   <!-- Google Analytics -->
+   <?php include_once("analyticstracking.php") ?>
 
-        //Animation loop stuff
-        var fps = 30;
-        var now;
-        var then = Date.now();
-        var interval = 1000/fps;
-        var delta;
+   <!-- Preload all the SVGs -->
+   <div id="preload"></div>
 
+   <!-- Where the magic happens -->
+   <canvas id="stageForeground"></canvas>
+</body>
 
-        function onScreen(object) {
-            var radius = (object.H + object.W) / 4;
-            var X, Y;
+<!-- JavaScript -->
+<script>
 
-            if ((object.X - radius) < 0) {X = radius;}
-            else if ((object.X + radius) > BODY_WIDTH) {X = BODY_WIDTH - radius;}
+    var stageForeground, FOREGROUND; //The foreground canvas
+    var STARTUP = true; //Do different stuff when the page first loads
+    var REPORT = false; //Debugging ON/OFF
+    var OPACITY = 0.8; //Global oppacity value
+    var DRAGGING = false; //Object being dragged (or not)
+        var firstDrag = false; //Check to ensure user "gets it"
+        var overlapObject = true; //Overlap check
+    var HOVERING = false; //Object being hovered (or not)
+    var PULSE = 0;
 
-            if ((object.Y - radius) < 0) {Y = radius;}
-            else if ((object.Y + radius) > BODY_HEIGHT) {Y = BODY_HEIGHT - radius;}
+    var displayObjects = new Array(); //All objects drawn to the scree
+    var offsetX, offsetY; //The offset of the objects from the center when dragging
 
-            return {X:X, Y:Y};
-        }
+    //Animation loop stuff
+    var fps = 30;
+    var now;
+    var then = Date.now();
+    var interval = 1000/fps;
+    var delta;
+
+    //Check if an object is on the screen and report corrected X/Y coords
+    function onScreen(object) {
+        var radius = (object.H + object.W) / 4;
+        var X, Y;
+
+        if ((object.X - radius) < 0) {X = radius;}
+        else if ((object.X + radius) > BODY_WIDTH) {X = BODY_WIDTH - radius;}
+
+        if ((object.Y - radius) < 0) {Y = radius;}
+        else if ((object.Y + radius) > BODY_HEIGHT) {Y = BODY_HEIGHT - radius;}
+
+        return {X:X, Y:Y};
+    }
 
         function mouseMoveListener(evt) {
             //Get mouse position
@@ -58,6 +74,12 @@
             var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
             var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
 
+            //Save the last location of dragging object
+            //console.log(DRAGGING);
+            var lastX = DRAGGING.X;
+            var lastY = DRAGGING.Y;
+
+            //Setup X/Y coords relative to original position of object
             DRAGGING.X = DRAGGING.Xori + (mouseX-offsetX);
             DRAGGING.Y = DRAGGING.Yori + (mouseY-offsetY);
 
@@ -86,27 +108,49 @@
                 if (DRAGGING.name !== object.name) {
                 if (DRAGGING.name === "page2" && object.name === "page1") {
 
+                    //Setup collision check variables
                     var minDistance = Math.pow((DRAGGING.H/2) + (object.H/2), 2);
                     var xVector = Math.pow((DRAGGING.X-object.X), 2);
                     var yVector = Math.pow((DRAGGING.Y-object.Y), 2);
                     var currentDistance = (xVector + yVector);
 
+                    //If there is a collision
                     if (currentDistance < minDistance) {
 
+
+
+                        //Update objects X coord.
                         var updatedDistance = Math.sqrt(minDistance)-Math.sqrt(currentDistance);
-                        object.X = object.X - updatedDistance;
+
+                        //Right or left check
+                        if (DRAGGING.X > object.X) {
+                            object.X = object.X - updatedDistance;
+                        } else {
+                            object.X = object.X + updatedDistance;
+                        }
 
                         //Make sure it everything stays within the screen
                         var positionCheck = onScreen(object);
                         if (positionCheck.X) {object.X = positionCheck.X;}
                         if (positionCheck.Y) {object.Y = positionCheck.Y;}
-                        if (positionCheck.X || positionCheck.X) {
-                            var updatedRadius = Math.sqrt(currentDistance)-(DRAGGING.W/2);
-                            if (updatedRadius > 50) {
-                                object.H = updatedRadius*2;
-                                object.W = updatedRadius*2;
-                            }
+
+                        //Reset draging object position, probably should do this earlier
+                        if (positionCheck.X || positionCheck.Y) {
+                            DRAGGING.X = lastX; DRAGGING.Y = lastY;
                         }
+
+
+                        //Change size of object when it's up against an edge
+                       // if (positionCheck.X || positionCheck.X) {
+
+
+                            //var updatedRadius = Math.sqrt(currentDistance)-(DRAGGING.W/2);
+                            //if (updatedRadius > 50) {
+
+                               // object.H = updatedRadius*2;
+                              //  object.W = updatedRadius*2;
+                            //}
+                       // }
 
                     }
                 }
@@ -221,10 +265,11 @@
                 H: standardSize*2, //Height
                 W: standardSize*2, //Width
                 image: "images/circle0.svg", //image location
+                alpha: 1, //opacity
                 draggable: false
             }; displayObjects.push(newObject);
 
-            var newObject = {
+           /* var newObject = {
                 name: "page3",
                 X: centerX, //current X position
                 Y: centerY, //current Y position
@@ -236,7 +281,7 @@
                 W: standardSize, //Width
                 image: "images/circle3.svg", //image location
                 draggable: true
-            }; displayObjects.push(newObject);
+            }; displayObjects.push(newObject); */
 
             var newObject = {
                 name: "page2",
@@ -314,11 +359,9 @@ function draw() {
 
         //Draw the background circle from X/Y center point
         if (object.name === "background") {
-            if (!firstDrag) {
-                //FOREGROUND.globalAlpha = 0.8;
-                var image = new Image(); image.src = object.image;
-                FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
-            }
+            FOREGROUND.globalAlpha = object.alpha;
+            var image = new Image(); image.src = object.image; //object.image;
+            FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
         } else {
             FOREGROUND.globalAlpha = 1;
             var image = new Image(); image.src = object.image;
@@ -328,8 +371,6 @@ function draw() {
         //Update old values
         object.Xold = object.X;
         object.Yold = object.Y;
-
-       // FOREGROUND.globalAlpha = OPACITY*0.5;
 
         if (object.name === "page1") {
         //Draw the middle circle from X/Y center point
@@ -461,6 +502,13 @@ function update() {
                     object.H--;
                 }
             }
+
+            if (object.name === "background" && firstDrag) {
+                if (object.alpha > 0) {
+                    object.alpha -= 0.1;
+                    if (object.alpha < 0) {object.alpha = 0;} //Sanity check
+                }
+            }
         });
 
         if (PULSE === 5) {PULSE = -7;}
@@ -472,42 +520,7 @@ function update() {
     return false;
 }
 
-//This is the main loop
-function mainLoop() {
-    update();
-    draw();
-    requestAnimationFrame(mainLoop);
-}
-
-
+    //The main animation loop
+    function mainLoop() {update(); draw(); requestAnimationFrame(mainLoop);}
 
 </script>
-</head>
-
-<!-- BODY -->
-<body>
-    <?php include_once("analyticstracking.php") ?>
-    <div id="preload"></div>
-    <canvas id="stageForeground"></canvas>
-	<div id="background">
-        <div id="backer">
-
-                <div id="text" onclick="window.location='mailto:ben@geiling.ca';" title="email me!"></div>
-
-                <div class="line"></div>
-                <div id="icons">
-                    <div id="google" title="Google+"></div>
-                    <div id="facebook" title="Facebook"></div>
-                    <div id="twitter" title="Twitter"></div>
-                    <div id="github" title="Github"></div>
-                    <div id="keybase" title="Keybase"></div>
-                    <div id="links" title="Links"></div>
-                    <div id="instagram" title="Instagram"></div>
-                    <div id="publications" title="Publications"></div>
-                </div>
-                <div class="line"></div>
-            <div id="drag"></div>
-
-        </div>
-    </div>
-</body>
