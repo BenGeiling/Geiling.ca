@@ -6,16 +6,17 @@ body
     padding: 0;
     overflow: hidden;
 
-  background: url(images/background.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    background: url(images/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
 }
 
 #preload
 {
-    background: url('images/circle2.svg'), url('images/publicationsB.svg'), url('images/instagramB.svg'), url('images/googleB.svg'), url('images/keybaseB.svg'), url('images/facebookB.svg'), url('images/twitterB.svg'), url('images/githubB.svg'), url('images/linksB.svg');
+    background: url('images/circle2.svg'), url('images/publicationsB.svg'), url('images/instagramB.svg'), url('images/googleB.svg'), url('images/keybaseB.svg'), url('images/facebookB.svg'), url('images/twitterB.svg'), url('images/github.svg'), url('images/linksB.svg');
 
     height: 0;
     width: 0;
@@ -110,7 +111,7 @@ body
 
 #github
 {
-    background: url('images/githubA.svg') no-repeat;
+    background: url('images/github.svg') no-repeat;
     background-size: contain;
     opacity: 0.8;
     float: left;

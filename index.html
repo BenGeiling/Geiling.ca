@@ -15,8 +15,6 @@
 
 	<!-- Include content resize script -->
 	<script type="text/javascript" src="scripts/resize.js"></script>
-
-
 </head>
 
 <!-- BODY -->
@@ -36,7 +34,8 @@
 
     var stageForeground, FOREGROUND; //The foreground canvas
     var STARTUP = true; //Do different stuff when the page first loads
-    var REPORT = false; //Debugging ON/OFF
+    var REPORT = true; //Debugging ON/OFF
+    var GLOBAL_VAR = 0; //Debugging variable
     var OPACITY = 0.8; //Global oppacity value
     var DRAGGING = false; //Object being dragged (or not)
         var firstDrag = false; //Check to ensure user "gets it"
@@ -59,11 +58,11 @@
         var radius = (object.H + object.W) / 4;
         var X, Y;
 
-        if ((object.X - radius) < 0) {X = radius;}
-        else if ((object.X + radius) > BODY_WIDTH) {X = BODY_WIDTH - radius;}
+        if ((object.X - radius) < 0) {X = radius + 3;}
+        else if ((object.X + radius) > BODY_WIDTH) {X = BODY_WIDTH - radius - 3;}
 
-        if ((object.Y - radius) < 0) {Y = radius;}
-        else if ((object.Y + radius) > BODY_HEIGHT) {Y = BODY_HEIGHT - radius;}
+        if ((object.Y - radius) < 0) {Y = radius + 3;}
+        else if ((object.Y + radius) > BODY_HEIGHT) {Y = BODY_HEIGHT - radius - 3;}
 
         return {X:X, Y:Y};
     }
@@ -244,8 +243,8 @@
             }
 
 			//Set size of constant DIVs
-            $("#stageForeground").prop('width', BODY_WIDTH)
-            $("#stageForeground").prop('height', BODY_HEIGHT)
+            stageForeground.width = BODY_WIDTH;
+            stageForeground.height = BODY_HEIGHT;
 
             var centerX = Math.round((BODY_WIDTH/2));
             var centerY = Math.round((BODY_HEIGHT/2));
@@ -294,11 +293,15 @@
                 H: standardSize, //Height
                 W: standardSize, //Width
                 image: "images/circle2.svg", //image location
+                icon: {
+                    name: "github",
+                    image: "images/github.svg" //image location
+                },
                 draggable: true
             }; displayObjects.push(newObject);
 
             var newObject = {
-                name: "page1",
+                name: "circle1",
                 X: centerX, //current X position
                 Y: centerY, //current Y position
                 Xold: centerX, //last X position
@@ -307,8 +310,8 @@
                 Yori: centerY, //original Y position
                 H: standardSize, //Height
                 W: standardSize, //Width
-                image: "images/circle1.svg", //image location
-                text: "images/textA.svg", //text location
+                image: "images/circle1a.svg", //Image location
+                background: "images/circle1b.svg", //Background location
                 draggable: true
             }; displayObjects.push(newObject);
 
@@ -343,6 +346,7 @@
 *********************     Draw Everything     *********************
 ******************************************************************/
 function draw() {
+    //Rounded space distance value if needed to draw things
     var globalSpace = Math.ceil(SCALE/100);
 
     //Clear canvas first before drawing anything new
@@ -350,33 +354,68 @@ function draw() {
 
     //Loop through all the objects that need to be drawn to the screen
     displayObjects.forEach(function(object) {
-        reportLog(object); //Report object to log
-        reportLog("X,Y,W,H - "+object.X+","+object.Y+","+object.W+","+object.H); //Report coords to log
+        //Report object to log
+        //reportLog("Drawing: " + object.name);
 
         //Draw the background circle from X/Y center point
-      // if (HOVERING) {
-        //}
+        if (HOVERING) {
+            //Report hovered object to log
+            reportLog("Hovering: " + object.name);
+        }
 
         //Draw the background circle from X/Y center point
         if (object.name === "background") {
             FOREGROUND.globalAlpha = object.alpha;
             var image = new Image(); image.src = object.image; //object.image;
             FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
-        } else {
             FOREGROUND.globalAlpha = 1;
+        } else if (object.name === "circle1") {
+            var size = 1;
+
+            GLOBAL_VAR += 1;
+            if (GLOBAL_VAR > 360) {GLOBAL_VAR = 1;}
+
+            //Rotate the background image
+            FOREGROUND.translate(object.X, object.Y);
+            FOREGROUND.rotate(Math.PI/180*GLOBAL_VAR);
+            FOREGROUND.translate(-object.X, -object.Y);
+
+            //Draw the background
+            var image = new Image(); image.src = object.background;
+            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+
+            //Undo the rotation
+            FOREGROUND.translate(object.X, object.Y);
+            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR);
+            FOREGROUND.translate(-object.X, -object.Y);
+
+            //Draw the circle image
             var image = new Image(); image.src = object.image;
-            FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
+            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+
+        } else {
+            var image = new Image(); image.src = object.image;
+            var size = 1;
+            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+        }
+
+        //Check if icons need to be drawn
+        if (object.icon) {
+   //         FOREGROUND.globalAlpha = GLOBAL_VAR;
+
+    //        GLOBAL_VAR += 0.1;
+    //        if (GLOBAL_VAR> 1) {GLOBAL_VAR = 0;}
+
+            var image = new Image(); image.src = object.icon.image;
+            var size = 0.3;
+            FOREGROUND.globalAlpha = 0.7;
+            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+            FOREGROUND.globalAlpha = 1;
         }
 
         //Update old values
         object.Xold = object.X;
         object.Yold = object.Y;
-
-        if (object.name === "page1") {
-        //Draw the middle circle from X/Y center point
-       // var img_circle = new Image(); img_circle.src = "images/textA.svg";
-        //FOREGROUND.drawImage(img_circle, object.X-(object.W/6), object.Y-(object.H/6), object.W/3*2, object.H/3);
-        }
 
 if (object.name === "page3") {
         //Draw the middle circle from X/Y center point
@@ -391,24 +430,6 @@ if (object.name === "page3") {
             X2 = object.X-((object.W*0.7)/2);
             Y1 = object.Y-(H/2)-(globalSpace*5);
             Y2 = object.Y-(H/2)-(globalSpace*5);
-
-           // var image = new Image(); image.src = object.text;
-            //FOREGROUND.drawImage(image, X1, Y1, W, H);
-
-            /*/Draw top line
-        var lineWidth = Math.ceil(globalSpace/3);
-        X1 = object.X-((object.W*0.7)/2);
-        Y1 += H+(globalSpace*2)
-        X2 += W;
-        Y2 += H+(globalSpace*2);
-
-        FOREGROUND.beginPath();
-        FOREGROUND.moveTo(X1, Y1);
-        FOREGROUND.lineTo(X2, Y2);
-        FOREGROUND.lineWidth = lineWidth;
-        FOREGROUND.strokeStyle = '#000000';
-        FOREGROUND.stroke();
-        FOREGROUND.closePath();*/
 
         //Draw icons
         var iconNumber = 8;
@@ -431,40 +452,16 @@ if (object.name === "page3") {
 
         }
 
-        /*/Draw bottom line
-        var lineWidth = Math.ceil(globalSpace/3);
-        X1 = object.X-((object.W*0.7)/2);
-        Y1 = 20+lineWidth+(globalSpace/2);
-        X2 = X2;
-        Y2 = 20+lineWidth+(globalSpace/2);
-
-        FOREGROUND.beginPath();
-        FOREGROUND.moveTo(X1, Y1);
-        FOREGROUND.lineTo(X2, Y2);
-        FOREGROUND.lineWidth = lineWidth;
-        FOREGROUND.strokeStyle = '#000000';
-        FOREGROUND.stroke();
-        FOREGROUND.closePath();*/
-
-        //Draw drag text
-        W = (object.W*0.6);
-        H = W/3;
-        X1 = object.X-(W/2);
-        Y1 = Y1+(globalSpace);
-
-       // var image = new Image(); image.src = "images/drag.svg";
-       // FOREGROUND.drawImage(image, X1, Y1, W, H);
-
     }
 
     });
 }
 
 //Report to console function set REPORT = true for debugging
-function reportLog(text) {
-    if (REPORT) {console.log(text);}
-    return false;
-}
+function reportLog(text) {if (REPORT) {console.log(text);} return false;}
+
+//whole number function to cleanup drawing
+function w(x) {return Math.floor(x);}
 
 //Get points along a circle
 function calcPointsCirc(cx, cy, rad, dashLength) {
@@ -495,11 +492,11 @@ function update() {
         displayObjects.forEach(function(object) {
             if (object.draggable) {
                 if (PULSE >= 0) {
-                    object.W++;
-                    object.H++;
+                 //   object.W+=2;
+                //    object.H+=2;
                 } else if (PULSE < 0) {
-                    object.W--;
-                    object.H--;
+                //    object.W-=2;
+                //    object.H-=2;
                 }
             }
 
