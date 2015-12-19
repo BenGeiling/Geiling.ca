@@ -10,9 +10,6 @@
 	<meta name="author" content="Ben Geiling" />
 	<link rel="stylesheet" type="text/css" href="main.css" media="screen" />
 
-	<!-- Include JQuery -->
-	<script type="text/javascript" src="scripts/jquery-2.1.4.min.js"></script>
-
 	<!-- Include content resize script -->
 	<script type="text/javascript" src="scripts/resize.js"></script>
 </head>
@@ -34,7 +31,7 @@
 
     var stageForeground, FOREGROUND; //The foreground canvas
     var STARTUP = true; //Do different stuff when the page first loads
-    var REPORT = true; //Debugging ON/OFF
+    var REPORT = false; //Debugging ON/OFF
     var GLOBAL_VAR = 0; //Debugging variable
     var OPACITY = 0.8; //Global oppacity value
     var DRAGGING = false; //Object being dragged (or not)
@@ -88,18 +85,25 @@
             if (positionCheck.Y) {DRAGGING.Y = positionCheck.Y;}
 
             //Check if the mouse is in a circle (work backwards through array to maintain z-index)
-            HOVERING = false;
+            HOVERING = false; document.body.style.cursor = "default";
+
             for (x = (displayObjects.length - 1); x >= 0; x--) {
                 var object = displayObjects[x];
                 var radiusSquared = Math.pow(((object.H + object.W) / 4), 2);
                 var mouseSquared = Math.pow((mouseX - object.X), 2) + Math.pow((mouseY - object.Y), 2);
 
                 //Check if mouse X/Y are inside of the circle
-                if ((mouseSquared < radiusSquared) && object.draggable === true) {
-                        HOVERING = object;
-                        break;
+                if ((mouseSquared < radiusSquared)) {
+                    //Check for mouse in icon
+                    if (object.icon) {
+                        var radiusSquared = Math.pow(((object.H*object.icon.size + object.W*object.icon.size) / 4), 2);
+                        if ((mouseSquared < radiusSquared)) {
+                            document.body.style.cursor = "pointer";
+                            HOVERING = object;
+                        }
+                    }
+                        break; //Ends the loop on the highest z-index object in the stack that the mouse is over
                 }
-
             }
 
             //UHH???
@@ -191,9 +195,7 @@
                         offsetX = mouseX; offsetY = mouseY;
                         object.Xori = object.X; object.Yori = object.Y;
 
-                        DRAGGING = object;
-                        if (!firstDrag) {firstDrag = true;}
-                       // stageForeground.addEventListener("mousemove", mouseMoveListener, false);
+                        DRAGGING = object; if (!firstDrag) {firstDrag = true;}
 
                         stageForeground.removeEventListener("mousedown", mouseDownListener, false);
                         window.addEventListener("mouseup", mouseUpListener, false);
@@ -209,6 +211,14 @@
             else if (evt.returnValue) {
                 evt.returnValue = false;
             } //older IE
+
+            //Check if hovering on icon
+            if (HOVERING) {
+                if (HOVERING.icon.name === "github") {
+                    window.open('https://www.github.com/BenGeiling', '_blank');
+                    HOVERING = false; DRAGGING = false;
+                }
+            }
 
             return false;
         }
@@ -295,8 +305,11 @@
                 image: "images/circle2.svg", //image location
                 icon: {
                     name: "github",
-                    image: "images/github.svg" //image location
+                    image1: "images/githubB.svg", //image location
+                    image2: "images/githubA.svg", //image location
+                    size: 0.3 //Icon size
                 },
+                size: 1, //Size
                 draggable: true
             }; displayObjects.push(newObject);
 
@@ -311,7 +324,9 @@
                 H: standardSize, //Height
                 W: standardSize, //Width
                 image: "images/circle1a.svg", //Image location
-                background: "images/circle1b.svg", //Background location
+                background1: "images/circle1b.svg", //Background location
+                background2: "images/circle1c.svg", //Background location
+                size: 1, //Size
                 draggable: true
             }; displayObjects.push(newObject);
 
@@ -358,22 +373,13 @@ function draw() {
         //reportLog("Drawing: " + object.name);
 
         //Draw the background circle from X/Y center point
-        if (HOVERING) {
-            //Report hovered object to log
-            reportLog("Hovering: " + object.name);
-        }
-
-        //Draw the background circle from X/Y center point
         if (object.name === "background") {
             FOREGROUND.globalAlpha = object.alpha;
             var image = new Image(); image.src = object.image; //object.image;
             FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
             FOREGROUND.globalAlpha = 1;
         } else if (object.name === "circle1") {
-            var size = 1;
-
-            GLOBAL_VAR += 1;
-            if (GLOBAL_VAR > 360) {GLOBAL_VAR = 1;}
+            GLOBAL_VAR += 1; if (GLOBAL_VAR > 360) {GLOBAL_VAR = 1;}
 
             //Rotate the background image
             FOREGROUND.translate(object.X, object.Y);
@@ -381,35 +387,42 @@ function draw() {
             FOREGROUND.translate(-object.X, -object.Y);
 
             //Draw the background
-            var image = new Image(); image.src = object.background;
-            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+            var image = new Image(); image.src = object.background2;
+            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
 
             //Undo the rotation
             FOREGROUND.translate(object.X, object.Y);
-            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR);
+            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.70);
+            FOREGROUND.translate(-object.X, -object.Y);
+
+            //Draw the background
+            var image = new Image(); image.src = object.background1;
+            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
+
+            //Undo the rotation
+            FOREGROUND.translate(object.X, object.Y);
+            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.30);
             FOREGROUND.translate(-object.X, -object.Y);
 
             //Draw the circle image
             var image = new Image(); image.src = object.image;
-            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
-
+            FOREGROUND.drawImage(image, w(object.X-(object.W*object.size*0.95/2)), w(object.Y-(object.H*object.size*0.95/2)), w(object.W*object.size*0.95), w(object.H*object.size*0.95));
         } else {
             var image = new Image(); image.src = object.image;
             var size = 1;
-            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+            FOREGROUND.drawImage(image, w(object.X-(object.W*object.size/2)), w(object.Y-(object.H*object.size/2)), w(object.W*object.size), w(object.H*object.size));
         }
 
         //Check if icons need to be drawn
         if (object.icon) {
-   //         FOREGROUND.globalAlpha = GLOBAL_VAR;
+            var image = new Image();
 
-    //        GLOBAL_VAR += 0.1;
-    //        if (GLOBAL_VAR> 1) {GLOBAL_VAR = 0;}
+            //Deal with hover effect
+            if (HOVERING) {image.src = object.icon.image2;}
+            else {image.src = object.icon.image1;}
 
-            var image = new Image(); image.src = object.icon.image;
-            var size = 0.3;
             FOREGROUND.globalAlpha = 0.7;
-            FOREGROUND.drawImage(image, w(object.X-(object.W*size/2)), w(object.Y-(object.H*size/2)), w(object.W*size), w(object.H*size));
+            FOREGROUND.drawImage(image, w(object.X-(object.W*object.size*object.icon.size/2)), w(object.Y-(object.H*object.size*object.icon.size/2)), w(object.W*object.size*object.icon.size), w(object.H*object.size*object.icon.size));
             FOREGROUND.globalAlpha = 1;
         }
 
@@ -461,7 +474,10 @@ if (object.name === "page3") {
 function reportLog(text) {if (REPORT) {console.log(text);} return false;}
 
 //whole number function to cleanup drawing
-function w(x) {return Math.floor(x);}
+function w(x) {
+    return x;
+   // return Math.floor(x);
+}
 
 //Get points along a circle
 function calcPointsCirc(cx, cy, rad, dashLength) {
@@ -492,14 +508,13 @@ function update() {
         displayObjects.forEach(function(object) {
             if (object.draggable) {
                 if (PULSE >= 0) {
-                 //   object.W+=2;
-                //    object.H+=2;
+                    object.size += 0.005;
                 } else if (PULSE < 0) {
-                //    object.W-=2;
-                //    object.H-=2;
+                    object.size -= 0.005;
                 }
             }
 
+            //Hide background arrows once the center circle is dragged
             if (object.name === "background" && firstDrag) {
                 if (object.alpha > 0) {
                     object.alpha -= 0.1;

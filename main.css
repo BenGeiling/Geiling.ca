@@ -12,11 +12,25 @@ body
     -o-background-size: cover;
     background-size: cover;
 
+    -webkit-box-shadow: inset 0px 0px 0px 3px #000000;
+    -moz-box-shadow: inset 0px 0px 0px 3px #000000;
+    box-shadow: inset 0px 0px 0px 3px #000000;
+
 }
 
 #preload
 {
-    background: url('images/circle2.svg'), url('images/publicationsB.svg'), url('images/instagramB.svg'), url('images/googleB.svg'), url('images/keybaseB.svg'), url('images/facebookB.svg'), url('images/twitterB.svg'), url('images/github.svg'), url('images/linksB.svg');
+    background:
+        url('images/circle2.svg'),
+        url('images/publicationsB.svg'),
+        url('images/instagramB.svg'),
+        url('images/googleB.svg'),
+        url('images/keybaseB.svg'),
+        url('images/facebookB.svg'),
+        url('images/twitterB.svg'),
+        url('images/githubA.svg'),
+        url('images/githubB.svg'),
+        url('images/linksB.svg');
 
     height: 0;
     width: 0;
