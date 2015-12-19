@@ -65,10 +65,18 @@
     }
 
         function mouseMoveListener(evt) {
+
+            //Get location of click either mouse or touch
+            if (evt.touches) {
+                click = {X: evt.touches[0].pageX, Y: evt.touches[0].pageY};
+            } else {
+                click = {X: evt.pageX, Y: evt.pageY};
+            }
+
             //Get mouse position
             var bRect = stageForeground.getBoundingClientRect();
-            var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
-            var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
+            var mouseX = (click.X - bRect.left)*(stageForeground.width/bRect.width);
+            var mouseY = (click.Y - bRect.top)*(stageForeground.height/bRect.height);
 
             //Save the last location of dragging object
             //console.log(DRAGGING);
@@ -169,19 +177,27 @@
         function mouseUpListener(evt) {
             stageForeground.addEventListener("mousedown", mouseDownListener, false);
             window.removeEventListener("mouseup", mouseUpListener, false);
+            window.removeEventListener("touchend", mouseUpListener, false);
             if (DRAGGING) {
                 DRAGGING = false;
                 //stageForeground.removeEventListener("mousemove", mouseMoveListener, false);
             }
         }
 
-        //When there is a mouse click
+        //When there is a mouse click or touch event
         function mouseDownListener(evt) {
+
+            //Get location of either mouse or touch
+            if (evt.touches) {
+                click = {X: evt.touches[0].pageX, Y: evt.touches[0].pageY};
+            } else {
+                click = {X: evt.pageX, Y: evt.pageY};
+            }
 
             //Get mouse position
             var bRect = stageForeground.getBoundingClientRect();
-            var mouseX = (evt.clientX - bRect.left)*(stageForeground.width/bRect.width);
-            var mouseY = (evt.clientY - bRect.top)*(stageForeground.height/bRect.height);
+            var mouseX = (click.X - bRect.left)*(stageForeground.width/bRect.width);
+            var mouseY = (click.Y - bRect.top)*(stageForeground.height/bRect.height);
 
             //Check if the mouse is in a circle (work backwards through array to maintain z-index)
             for (x = (displayObjects.length - 1); x >= 0; x--) {
@@ -198,12 +214,15 @@
                         DRAGGING = object; if (!firstDrag) {firstDrag = true;}
 
                         stageForeground.removeEventListener("mousedown", mouseDownListener, false);
+                        stageForeground.removeEventListener("touchdown", mouseDownListener, false);
+
                         window.addEventListener("mouseup", mouseUpListener, false);
+                        window.addEventListener("touchend", mouseUpListener, false);
 
                         break;
                 }
+            }
 
-        }
             //code below prevents the mouse down from having an effect on the main browser window:
             if (evt.preventDefault) {
                 evt.preventDefault();
@@ -238,6 +257,7 @@
 
                 //Add a listener for mousedown
                 stageForeground.addEventListener("mousedown", mouseDownListener, false);
+                stageForeground.addEventListener("touchstart", mouseDownListener, false);
                 STARTUP = false;
             }
 
@@ -321,8 +341,8 @@
                 Yold: centerY, //last Y position
                 Xori: centerX, //original X position
                 Yori: centerY, //original Y position
-                H: standardSize, //Height
-                W: standardSize, //Width
+                H: standardSize*1.05, //Height
+                W: standardSize*1.05, //Width
                 image: "images/circle1a.svg", //Image location
                 background1: "images/circle1b.svg", //Background location
                 background2: "images/circle1c.svg", //Background location
@@ -332,6 +352,7 @@
 
             // Start things off
             stageForeground.addEventListener("mousemove", mouseMoveListener, false);
+            stageForeground.addEventListener("touchmove", mouseMoveListener, false);
             requestAnimationFrame(mainLoop);
 
 			/*/Loop through each icon ID
