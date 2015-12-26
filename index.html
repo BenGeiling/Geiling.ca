@@ -92,6 +92,10 @@
             if (positionCheck.X) {DRAGGING.X = positionCheck.X;}
             if (positionCheck.Y) {DRAGGING.Y = positionCheck.Y;}
 
+            //Scale circle dynamically with position
+            //DRAGGING.W = DRAGGING.W - 5;
+            //DRAGGING.H = DRAGGING.H - 5;
+
             //Check if the mouse is in a circle (work backwards through array to maintain z-index)
             HOVERING = false; document.body.style.cursor = "default";
 
@@ -114,7 +118,7 @@
                 }
             }
 
-            //UHH???
+            /*/UHH???
             displayObjects.forEach(function(object) {
                 if (DRAGGING.name !== object.name) {
                 if (DRAGGING.name === "page2" && object.name === "page1") {
@@ -166,7 +170,7 @@
                     }
                 }
                 }
-            });
+            });*/
 
             draw();
 
@@ -278,7 +282,7 @@
 
             var centerX = Math.round((BODY_WIDTH/2));
             var centerY = Math.round((BODY_HEIGHT/2));
-            var standardSize = Math.round((SCALE*SCALE_FACTOR));
+            var standardSize = Math.round((SCALE*SCALE_FACTOR*0.98));
 
             //Setup containers for display
             displayObjects = []; //Empty display array
@@ -291,15 +295,45 @@
                 Yold: centerY, //last Y position
                 Xori: centerX, //original X position
                 Yori: centerY, //original Y position
-                H: standardSize*2, //Height
-                W: standardSize*2, //Width
+                H: standardSize*3.5, //Height
+                W: standardSize*3.5, //Width
                 image: "images/circle0.svg", //image location
                 alpha: 1, //opacity
                 draggable: false
             }; displayObjects.push(newObject);
 
            /* var newObject = {
-                name: "page3",
+                name: "background",
+                X: centerX-standardSize*1.1, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX-standardSize*1.1, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX-standardSize*1.1, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize*0.8, //Height
+                W: standardSize*0.8, //Width
+                image: "images/circle_cut.svg", //image location
+                alpha: 1, //opacity
+                draggable: false
+            }; displayObjects.push(newObject);
+
+            var newObject = {
+                name: "background",
+                X: centerX+standardSize*1.1, //current X position
+                Y: centerY, //current Y position
+                Xold: centerX+standardSize*1.1, //last X position
+                Yold: centerY, //last Y position
+                Xori: centerX+standardSize*1.1, //original X position
+                Yori: centerY, //original Y position
+                H: standardSize*0.8, //Height
+                W: standardSize*0.8, //Width
+                image: "images/circle_cut.svg", //image location
+                alpha: 1, //opacity
+                draggable: false
+            }; displayObjects.push(newObject);*/
+
+           var newObject = {
+                name: "circle3",
                 X: centerX, //current X position
                 Y: centerY, //current Y position
                 Xold: centerX, //last X position
@@ -308,9 +342,10 @@
                 Yori: centerY, //original Y position
                 H: standardSize, //Height
                 W: standardSize, //Width
-                image: "images/circle3.svg", //image location
+                background1: "images/circle3a.svg", //image location
+                background2: "images/circle3b.svg", //image location
                 draggable: true
-            }; displayObjects.push(newObject); */
+            }; displayObjects.push(newObject);
 
             var newObject = {
                 name: "circle2",
@@ -444,7 +479,7 @@ function draw() {
 
             //Undo the rotation
             FOREGROUND.translate(object.X, object.Y);
-            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.70);
+            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.30);
             FOREGROUND.translate(-object.X, -object.Y);
 
             //Draw the background
@@ -453,12 +488,26 @@ function draw() {
 
             //Undo the rotation
             FOREGROUND.translate(object.X, object.Y);
-            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.30);
+            FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.70);
             FOREGROUND.translate(-object.X, -object.Y);
 
             //Draw the circle image
             var image = new Image(); image.src = object.image;
-            FOREGROUND.drawImage(image, w(object.X-(object.W*0.95/2)), w(object.Y-(object.H*0.95/2)), w(object.W*0.95), w(object.H*0.95));
+            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
+        } else if (object.name === "circle3") {
+
+            //Draw the background
+            var image = new Image(); image.src = object.background2;
+            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
+
+            GLOBAL_VAR += 0.2; if (GLOBAL_VAR > 360) {GLOBAL_VAR = 1;}
+            FOREGROUND.globalAlpha = GLOBAL_VAR/360*2;
+
+            //Draw the background
+            var image = new Image(); image.src = object.background1;
+            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
+            FOREGROUND.globalAlpha = 1;
+
         }
 
         //Check if icons need to be drawn
@@ -560,13 +609,13 @@ function update() {
                 }
             }
 
-            //Hide background arrows once the center circle is dragged
+            /*/Hide background arrows once the center circle is dragged
             if (object.name === "background" && firstDrag) {
                 if (object.alpha > 0) {
                     object.alpha -= 0.1;
                     if (object.alpha < 0) {object.alpha = 0;} //Sanity check
                 }
-            }
+            }*/
         });
 
         if (PULSE === 5) {PULSE = -7;}

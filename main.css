@@ -6,17 +6,20 @@ body
     padding: 0;
     overflow: hidden;
 
-    background: url(images/background.jpg) no-repeat center center fixed;
+   /* background: url(images/background.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    background-size: cover;
+    background-size: cover;*/
+    background-color: rgb(238, 240, 190);
 }
 
 #preload
 {
     background:
         url('images/circle2.svg'),
+        url('images/circle3a.svg'),
+        url('images/circle3b.svg'),
         url('images/publicationsB.svg'),
         url('images/instagramB.svg'),
         url('images/googleB.svg'),
