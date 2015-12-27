@@ -40,6 +40,8 @@
     var HOVERING = false; //Object being hovered (or not)
     var PULSE = 0;
 
+    var standardSize;
+
     var displayObjects = new Array(); //All objects drawn to the scree
     var offsetX, offsetY; //The offset of the objects from the center when dragging
 
@@ -115,6 +117,36 @@
                         }
                     }
                         break; //Ends the loop on the highest z-index object in the stack that the mouse is over
+                }
+            }
+
+            //Snap Circles to background
+            var backgroundObject = [];
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)-(standardSize*1.185)),
+                Y: Math.round((BODY_HEIGHT/2))
+            }; backgroundObject.push(newObject); //Left
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)+(standardSize*1.185)),
+                Y: Math.round((BODY_HEIGHT/2))
+            }; backgroundObject.push(newObject); //Right
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)),
+                Y: Math.round((BODY_HEIGHT/2))
+            }; backgroundObject.push(newObject); //Center
+
+            for (x = 0; x < backgroundObject.length; x++) {
+                //Setup collision check variables
+                var minDistance = Math.pow((DRAGGING.H/10), 2);
+                var xVector = Math.pow((DRAGGING.X-backgroundObject[x].X), 2);
+                var yVector = Math.pow((DRAGGING.Y-backgroundObject[x].Y), 2);
+                var currentDistance = (xVector + yVector);
+
+                //If there is a collision
+                if (currentDistance < minDistance) {
+                    //Center the circle to left
+                    DRAGGING.X = backgroundObject[x].X;
+                    DRAGGING.Y = backgroundObject[x].Y;
                 }
             }
 
@@ -269,7 +301,7 @@
 
 			//Create a min. relative stage size (looks better smaller on bigger screens)
 			var MAX_SIZE = 500;
-            var SCALE_FACTOR = 0.6; //Scale everything to be 80% min. size
+            var SCALE_FACTOR = 0.58; //Scale everything to be 80% min. size
             var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
 
             if (MAX_SIZE >= SCALE) {
@@ -282,7 +314,7 @@
 
             var centerX = Math.round((BODY_WIDTH/2));
             var centerY = Math.round((BODY_HEIGHT/2));
-            var standardSize = Math.round((SCALE*SCALE_FACTOR*0.98));
+            standardSize = Math.round((SCALE*SCALE_FACTOR));
 
             //Setup containers for display
             displayObjects = []; //Empty display array
