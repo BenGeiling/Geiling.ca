@@ -300,7 +300,7 @@
                 image2: "images/mailB.svg", //image locati10on
                 X: 0,
                 Y: 0,
-                size: 0.3 //Icon size
+                size: 0.33 //Icon size
             },
             {
                 name: "links",
@@ -365,16 +365,15 @@
             Yori: centerY, //original Y position
             H: standardSize, //Height
             W: standardSize, //Width
-            image: "images/circle2a.svg", //image location
-            background1: "images/circle2b.svg", //Background location
-            background2: "images/circle2c.svg", //Background location
+            background1: "images/circle2a.svg", //image location
+            background2: "images/circle2b.svg", //Background location
             icon: [{
                 name: "github",
                 image1: "images/githubA.svg", //image location
                 image2: "images/githubB.svg", //image location
                 X: 0,
                 Y: 0,
-                size: 0.3 //Icon size
+                size: 0.33 //Icon size
             }],
             size: 1, //Size
             draggable: true
@@ -463,10 +462,6 @@ function draw() {
             FOREGROUND.translate(object.X, object.Y);
             FOREGROUND.rotate(-Math.PI/180*GLOBAL_VAR*0.70);
             FOREGROUND.translate(-object.X, -object.Y);
-
-            //Draw the circle image
-            var image = new Image(); image.src = object.image;
-            FOREGROUND.drawImage(image, w(object.X-(object.W/2)), w(object.Y-(object.H/2)), w(object.W), w(object.H));
         } else if (object.name === "circle3") {
 
             //Draw the background

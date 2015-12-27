@@ -17,19 +17,18 @@ body
 #preload
 {
     background:
-        url('images/circle2a.svg'),
-        url('images/circle3a.svg'),
-        url('images/circle3b.svg'),
-        url('images/publicationsB.svg'),
-        url('images/instagramB.svg'),
-        url('images/googleB.svg'),
-        url('images/keybaseB.svg'),
-        url('images/facebookB.svg'),
-        url('images/twitterB.svg'),
-        url('images/githubA.svg'),
-        url('images/githubB.svg'),
-        url('images/linksB.svg');
-
+        url('images/circle0.svg'),
+        url('images/circle1a.svg'), url('images/circle1b.svg'), url('images/circle1c.svg'),
+        url('images/circle2a.svg'), url('images/circle2b.svg'),
+        url('images/circle3a.svg'), url('images/circle3b.svg'),
+        url('images/instagramA.svg'), url('images/instagramB.svg'),
+        url('images/googleA.svg'), url('images/googleB.svg'),
+        url('images/keybaseA.svg'), url('images/keybaseB.svg'),
+        url('images/facebookA.svg'), url('images/facebookB.svg'),
+        url('images/twitterA.svg'), url('images/twitterB.svg'),
+        url('images/githubA.svg'), url('images/githubB.svg'),
+        url('images/mailA.svg'), url('images/mailB.svg'),
+        url('images/linksA.svg'), url('images/linksB.svg');
     height: 0;
     width: 0;
     visibility: hidden;
