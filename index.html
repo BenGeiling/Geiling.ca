@@ -40,6 +40,7 @@
         var overlapObject = true; //Overlap check
     var HOVERING = false; //Object being hovered (or not)
     var PULSE = 0;
+    var LANDSCAPE = true;
 
     var standardSize;
 
@@ -118,14 +119,26 @@
 
         //Snap Circles to background, first figure out where the 3 snap points are
         var backgroundObject = [];
-        var newObject = {
-            X: Math.round((BODY_WIDTH/2)-(standardSize*1.185)),
-            Y: Math.round((BODY_HEIGHT/2))
-        }; backgroundObject.push(newObject); //Left
-        var newObject = {
-            X: Math.round((BODY_WIDTH/2)+(standardSize*1.185)),
-            Y: Math.round((BODY_HEIGHT/2))
-        }; backgroundObject.push(newObject); //Right
+        if (LANDSCAPE) {
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)-(standardSize*1.185)),
+                Y: Math.round((BODY_HEIGHT/2))
+            }; backgroundObject.push(newObject); //Left
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)+(standardSize*1.185)),
+                Y: Math.round((BODY_HEIGHT/2))
+            }; backgroundObject.push(newObject); //Right
+        } else {
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)),
+                Y: Math.round((BODY_HEIGHT/2)-(standardSize*1.185))
+            }; backgroundObject.push(newObject); //Top
+            var newObject = {
+                X: Math.round((BODY_WIDTH/2)),
+                Y: Math.round((BODY_HEIGHT/2)+(standardSize*1.185))
+            }; backgroundObject.push(newObject); //Bottom
+        }
+
         var newObject = {
             X: Math.round((BODY_WIDTH/2)),
             Y: Math.round((BODY_HEIGHT/2))
@@ -249,19 +262,26 @@
             STARTUP = false;
         }
 
+        //Check if landscape or not
+        if (BODY_WIDTH < BODY_HEIGHT) {LANDSCAPE = false;} else {LANDSCAPE = true;}
+
         //Create a min. relative stage size (looks better smaller on bigger screens)
         var MAX_SIZE = 500;
-        var SCALE_FACTOR = 0.58; //Scale everything to be 80% min. size
+        var SCALE_FACTOR = 0.285; //Scale everything by this
         var stageW = MAX_SIZE; //Try to keep the size at max. size as long as possible
+
+        //Set SCALE factor to the larger of the two lengths
+        var SCALE; if (BODY_HEIGHT > BODY_WIDTH) {SCALE = BODY_HEIGHT;} else {SCALE = BODY_WIDTH;}
+
 
         if (MAX_SIZE >= SCALE) {stageW = SCALE;}
 
         //Set size of constant DIVs
         stageForeground.width = BODY_WIDTH;
         stageForeground.height = BODY_HEIGHT;
-
         var centerX = Math.round((BODY_WIDTH/2));
         var centerY = Math.round((BODY_HEIGHT/2));
+
         standardSize = Math.round((SCALE*SCALE_FACTOR));
 
         //Setup containers for display
@@ -406,8 +426,7 @@
 *********************     Draw Everything     *********************
 ******************************************************************/
 function draw() {
-    //Rounded space distance value if needed to draw things
-    var globalSpace = Math.ceil(SCALE/100);
+
 
     //Clear canvas first before drawing anything new
     FOREGROUND.clearRect(0, 0, BODY_WIDTH, BODY_HEIGHT);
@@ -419,10 +438,23 @@ function draw() {
 
         //Draw the background circle from X/Y center point
         if (object.name === "background") {
-            FOREGROUND.globalAlpha = object.alpha;
+
+            //Rotate the background image 90 degrees if needed
+            if (!LANDSCAPE) {
+                FOREGROUND.translate(object.X, object.Y);
+                FOREGROUND.rotate(Math.PI/2);
+                FOREGROUND.translate(-object.X, -object.Y);
+            }
+
             var image = new Image(); image.src = object.image; //object.image;
             FOREGROUND.drawImage(image, object.X-(object.W/2), object.Y-(object.H/2), object.W, object.H);
-            FOREGROUND.globalAlpha = 1;
+
+            //Rotate the background image 90 degrees if needed
+            if (!LANDSCAPE) {
+                FOREGROUND.translate(object.X, object.Y);
+                FOREGROUND.rotate(-Math.PI/2);
+                FOREGROUND.translate(-object.X, -object.Y);
+            }
         } else if (object.name === "circle1") {
             GLOBAL_VAR += 0.2; if (GLOBAL_VAR > 360) {GLOBAL_VAR = 1;}
 
