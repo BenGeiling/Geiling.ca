@@ -11,7 +11,7 @@ body
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;*/
-    background-color: rgb(238, 240, 190);
+    background-color: #ececec;
 }
 
 #preload
